@@ -1,5 +1,10 @@
 const express = require('express');
 const cors = require('cors');
+const dotenv = require('dotenv');
+
+// 환경 변수 로드
+dotenv.config();
+
 const app = express();
 const port = process.env.PORT || 8181;
 const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost';
