@@ -18,7 +18,7 @@ app.use(cors({
 }));
 
 
-const { getTest } = require('./database');
+const { getTest } = require('./test/testRepository');
 app.get('/', async (req, res) => {
   try {
     const data = await getTest();

@@ -21,7 +21,7 @@ async function getTest() {
       'SELECT * FROM users'
     );
     if (rows.length > 0) {
-      return rows[0].assistant_id;
+      return rows
     } else {
       return null;
     }
