@@ -1,4 +1,7 @@
 const mysql = require('mysql2/promise');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 const host = process.env.DBHOST;
 const user = process.env.DBUSER; 
@@ -15,22 +18,16 @@ const pool = mysql.createPool({
 });
 
 async function getTest() {
-  const connection = await pool.getConnection(); 
-  try {
-    const [rows] = await connection.query(
-      'SELECT * FROM users'
-    );
-    if (rows.length > 0) {
-      return rows
-    } else {
-      return null;
+    const connection = await pool.getConnection(); 
+    try {
+      const [rows] = await connection.query('SELECT * FROM users');
+      return rows.length > 0 ? rows : null;
+    } catch (err) {
+      console.error('Database Error:', err);
+      throw err;
+    } finally {
+      connection.release();
     }
-  } catch (err) {
-    console.error('Database Error:', err);
-    throw err;  // 에러 발생 시 상위 스택으로 전파
-  } finally {
-    connection.release();
   }
-}
 
 module.exports = { getTest };
