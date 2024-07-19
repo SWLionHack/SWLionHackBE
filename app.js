@@ -19,10 +19,10 @@ app.use(cors({
 
 
 const { getTest } = require('./test/testRepository');
-app.get('/', async (req, res) => {
+app.get('/test', async (req, res) => {
   try {
     const data = await getTest();
-    res.json({ message: 'Hello, Express!, end point /', data: data });
+    res.json({ message: 'Hello, Express!, end point /test', data: data });
   } catch (err) {
     res.status(500).json({ message: 'Database Error', error: err.message });
   }
