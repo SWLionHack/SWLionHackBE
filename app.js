@@ -18,11 +18,11 @@ app.use(cors({
 }));
 
 app.get('/', (req, res) => {
-  res.send('Hello, Express!, end point /');
+  res.json({ message: 'Hello, Express!, end point /' });
 });
 
 app.get('/api', (req, res) => {
-  res.send('Hello, Express!, end point /api');
+  res.json({ message: 'Hello, Express!, end point /api' });
 });
 
 
