@@ -17,8 +17,15 @@ app.use(cors({
   optionsSuccessStatus: 204
 }));
 
-app.get('/', (req, res) => {
-  res.json({ message: 'Hello, Express!, end point /' });
+
+const { getTest } = require('./database');
+app.get('/', async (req, res) => {
+  try {
+    const data = await getTest();
+    res.json({ message: 'Hello, Express!, end point /', data: data });
+  } catch (err) {
+    res.status(500).json({ message: 'Database Error', error: err.message });
+  }
 });
 
 app.get('/api', (req, res) => {
