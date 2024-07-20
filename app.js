@@ -17,21 +17,20 @@ app.use(cors({
   optionsSuccessStatus: 204
 }));
 
+const { getTest } = require('./test/testRepository.js');
 
-const { getTest } = require('./test/testRepository');
-app.get('/test', async (req, res) => {
+app.get('/test', async (req, res) => { // req를 추가했습니다.
   try {
     const data = await getTest();
     res.json({ message: 'Hello, Express!, end point /test', data: data });
   } catch (err) {
-    res.status(500).json({ message: 'Database Error', error: err.message });
+    res.status(500).json({ message: 'Database Error', error: err.message }); // 상태 코드 추가
   }
 });
 
 app.get('/api', (req, res) => {
   res.json({ message: 'Hello, Express!, end point /api' });
 });
-
 
 app.listen(port, () => {
   console.log(`Server running on :${port}`);
