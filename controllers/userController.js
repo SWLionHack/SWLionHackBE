@@ -47,23 +47,13 @@ const signUp = async (req, res) => {
   const { name, phone, status, email, password, confirmPassword } = req.body;
 
   // 필수 정보가 모두 있는지 확인
-  if (!name || !phone || !email || !password || !confirmPassword) {
+  if (!name || !phone || !email || !password || !confirmPassword ||!status) {
     return res.status(400).send('정보를 모두 입력하세요');
   }
 
   // 비밀번호 확인
   if (password !== confirmPassword) {
     return res.status(400).send('비밀번호가 일치하지 않습니다');
-  }
-
-  // status 변환
-  let convertedStatus;
-  if (status === '부모') {
-    convertedStatus = 'parent';
-  } else if (status === '자녀') {
-    convertedStatus = 'child';
-  } else {
-    return res.status(400).send('올바른 상태 값을 입력하세요');
   }
 
   try {
@@ -81,7 +71,7 @@ const signUp = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // 사용자 생성
-    const newUser = await User.create({ name, phone, email, password: hashedPassword, status: convertedStatus });
+    const newUser = await User.create({ name, phone, email, password: hashedPassword, status });
     console.log('New user created:', newUser);
     return res.status(201).send('회원가입이 완료되었습니다.');
   } catch (err) {
