@@ -4,6 +4,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
+const cookieParser = require('cookie-parser'); // 쿠키 파서 추가
 const router = require('./routes/router');
 const sequelize = require('./sequelize');
 const User = require('./models/User');
@@ -22,6 +23,7 @@ app.use(cors({
 
 app.use(bodyParser.json()); // JSON 요청 본문 파싱 설정
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser()); // 쿠키 파서 미들웨어 추가
 
 const initializeApp = async () => {
   try {

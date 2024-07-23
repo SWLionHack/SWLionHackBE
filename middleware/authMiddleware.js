@@ -1,13 +1,13 @@
 const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser'); // 쿠키 파서 추가
 
 const JWT_SECRET = process.env.JWT_SECRET || 'JWT_TOKEN';
 
 const authenticateJWT = (req, res, next) => {
-  const authHeader = req.header('Authorization');
-  const token = authHeader && authHeader.split(' ')[1];
+  const token = req.cookies.token; // 쿠키에서 토큰 추출
 
   if (!token) {
-    return res.status(401).send('Access Denied');
+    return res.status(401).send('Access Denied: No token provided');
   }
 
   try {
@@ -20,4 +20,3 @@ const authenticateJWT = (req, res, next) => {
 };
 
 module.exports = { authenticateJWT };
-    
