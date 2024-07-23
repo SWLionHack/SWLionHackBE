@@ -1,10 +1,12 @@
 const express = require('express');
 const path = require('path');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken'); // jsonwebtoken 패키지 추가
 const { Op } = require('sequelize');
 const User = require('../models/User'); // User 모델 파일 경로
 
 const router = express.Router();
+const JWT_SECRET = process.env.JWT_SECRET || 'JWT_TOKEN'; // JWT 비밀 키 설정
 
 router.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, '../template/login.html'));
@@ -33,8 +35,10 @@ router.post('/login', async function(req, res) {
       return res.status(400).send('이메일 또는 비밀번호가 잘못되었습니다.');
     }
 
-    // 로그인 성공
-    return res.status(200).send('로그인이 완료되었습니다.');
+    // 로그인 성공 -> JWT 생성
+    const token = jwt.sign({ id: user.id, email: user.email, status: user.status }, JWT_SECRET, { expiresIn: '1h' });
+
+    return res.status(200).json({ message: '로그인이 완료되었습니다.', token: token });
   } catch (err) {
     console.error(err);
     // 기타 오류 처리
@@ -42,7 +46,7 @@ router.post('/login', async function(req, res) {
   }
 });
 
-
+// 회원가입 처리
 router.post('/sign-up', async function(req, res) {
   const name = req.body.Name;
   const phone = req.body.phone;
@@ -86,5 +90,27 @@ router.post('/sign-up', async function(req, res) {
   }
 });
 
+// 인증 미들웨어 추가
+const authenticateJWT = (req, res, next) => {
+  const authHeader = req.header('Authorization');
+  const token = authHeader && authHeader.split(' ')[1]; // Authorization 헤더에서 토큰 추출
 
-module.exports = router;
+  if (!token) {
+    return res.status(401).send('Access Denied');
+  }
+
+  try {
+    const verified = jwt.verify(token, JWT_SECRET);
+    req.user = verified; // 토큰 검증 후 사용자 정보 저장
+    next();
+  } catch (err) {
+    res.status(400).send('Invalid Token');
+  }
+};
+
+// JWT 인증이 필요한 엔드포인트 예시
+router.get('/protected', authenticateJWT, (req, res) => {
+  res.status(200).send('This is a protected route');
+});
+
+module.exports = { router, authenticateJWT };
