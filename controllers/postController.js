@@ -36,7 +36,7 @@ const createPost = async (req, res) => {
   const { title, content } = req.body;
 
   if (!author || !title || !content) {
-    return res.status(400).json({ message: '작성자, 제목 및 내용은 필수입니다.' });
+    return res.status(400).json({ message: '제목 및 내용은 필수입니다.' });
   }
 
   try {
@@ -56,10 +56,12 @@ const createPost = async (req, res) => {
 // 게시글 수정
 const updatePost = async (req, res) => {
   const { postID } = req.params;
-  const { author, title, content } = req.body;
+  //const { author, title, content } = req.body;
+  const updateId = req.user.id.toString();
+  const {title, content }=req.body;
 
-  if (!author || !title || !content) {
-    return res.status(400).json({ message: '작성자, 제목 및 내용은 필수입니다.' });
+  if (!title || !content) {
+    return res.status(400).json({ message: '제목 및 내용은 필수입니다.' });
   }
 
   try {
@@ -68,7 +70,11 @@ const updatePost = async (req, res) => {
       return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' });
     }
 
-    post.author = author;
+    if(post.author !== updateId) {
+        return res.status(403).json({ message: '수정 권한이 없습니다.', postAuthor: post.author, updateId});
+    }
+
+    //post.author = author;
     post.title = title;
     post.content = content;
     await post.save();
@@ -83,11 +89,15 @@ const updatePost = async (req, res) => {
 // 게시글 삭제
 const deletePost = async (req, res) => {
   const { postID } = req.params;
+  const authorId = req.user.id.toString();
 
   try {
     const post = await Post.findByPk(postID);
     if (!post) {
       return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' });
+    }
+    if(post.author !== authorId){
+        return res.status(403).json({message:'삭제 권한이 없습니다.'});
     }
 
     await post.destroy();
