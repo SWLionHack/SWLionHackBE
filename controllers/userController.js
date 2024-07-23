@@ -58,7 +58,7 @@ const signUp = async (req, res) => {
 
   // status 변환
   let convertedStatus;
-  if (status === '부모') {
+  if (status === 'parent') {
     convertedStatus = 'parent';
   } else if (status === '자녀') {
     convertedStatus = 'child';
