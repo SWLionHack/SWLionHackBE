@@ -33,6 +33,7 @@ const getPostById = async (req, res) => {
 const createPost = async (req, res) => {
   //const { author, title, content } = req.body;
   const author = req.user.id;
+  const status = req.user.status;
   const { title, content } = req.body;
 
   if (!author || !title || !content) {
@@ -42,6 +43,7 @@ const createPost = async (req, res) => {
   try {
     const newPost = await Post.create({
       author,
+      status,
       title,
       content,
       createdAt: new Date()
@@ -57,7 +59,7 @@ const createPost = async (req, res) => {
 const updatePost = async (req, res) => {
   const { postID } = req.params;
   //const { author, title, content } = req.body;
-  const updateId = req.user.id.toString();
+  const updateId = req.user.id;
   const {title, content }=req.body;
 
   if (!title || !content) {
@@ -89,7 +91,7 @@ const updatePost = async (req, res) => {
 // 게시글 삭제
 const deletePost = async (req, res) => {
   const { postID } = req.params;
-  const authorId = req.user.id.toString();
+  const authorId = req.user.id;
 
   try {
     const post = await Post.findByPk(postID);

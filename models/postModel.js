@@ -8,6 +8,10 @@ const Post = sequelize.define('Post', {
     primaryKey: true
   },
   author: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  status: {
     type: DataTypes.STRING,
     allowNull: false
   },
