@@ -5,9 +5,13 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const router = require('./routes/router');
+const postRouter = require('./routes/postRouter');
 const sequelize = require('./sequelize');
 const User = require('./models/User');
+const postModel = require('./models/postModel.js');
 const { getTest } = require('./test/testRepository.js');
+
+
 
 const app = express();
 const port = process.env.PORT || 8181;
@@ -55,6 +59,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('views', path.join(__dirname, 'src', 'views'));
 
 app.use("/", router);
+app.use("/", postRouter);
 
 app.get('/test', async (req, res) => {
   try {
