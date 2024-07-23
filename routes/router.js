@@ -6,7 +6,7 @@ const { Op } = require('sequelize');
 const User = require('../models/User'); // User 모델 파일 경로
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key'; // JWT 비밀 키 설정
+const JWT_SECRET = process.env.JWT_SECRET || 'JWT_TOKEN'; // JWT 비밀 키 설정
 
 router.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, '../template/login.html'));
