@@ -95,10 +95,10 @@ const protectedRoute = (req, res) => {
 };
 
 // 사용자 정보 제공
-const getUserInfo = async (req, res) => {
+const UserInfo = async (req, res) => {
   try {
     const userId = req.user.id; // 인증 미들웨어를 통해 설정된 사용자 ID
-    const user = await User.findByPk(userId, { attributes: ['name', 'phone', 'email', 'password'] });
+    const user = await User.findByPk(userId, { attributes: ['name', 'status','phone', 'email'] });
 
     if (!user) {
       return res.status(404).send('사용자를 찾을 수 없습니다.');
@@ -117,6 +117,6 @@ module.exports = {
   login,
   signUp,
   protectedRoute,
-  getUserInfo,
+  UserInfo,
   logout 
 };

@@ -20,7 +20,7 @@ const pool = mysql.createPool({
 async function getTest() {
     const connection = await pool.getConnection(); 
     try {
-      const [rows] = await connection.query('SELECT * FROM users');
+      const [rows] = await connection.query('SELECT * FROM user');
       return rows.length > 0 ? rows : null;
     } catch (err) {
       console.error('Database Error:', err);
