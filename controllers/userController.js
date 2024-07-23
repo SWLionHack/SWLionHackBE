@@ -56,19 +56,6 @@ const signUp = async (req, res) => {
     return res.status(400).send('비밀번호가 일치하지 않습니다');
   }
 
-<<<<<<< HEAD
-  // status 변환
-  let convertedStatus;
-  if (status === 'parent') {
-    convertedStatus = 'parent';
-  } else if (status === '자녀') {
-    convertedStatus = 'child';
-  } else {
-    return res.status(400).send('올바른 상태 값을 입력하세요');
-  }
-
-=======
->>>>>>> login
   try {
     // 이메일 또는 전화번호 중복 확인
     const existingUser = await User.findOne({ where: { [Op.or]: [{ email }, { phone }] } });
