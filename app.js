@@ -7,11 +7,18 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 8181;
-const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost';
+const corsOrigins = [process.env.CORS_ORIGIN || 'http://localhost', 'http://localhost:3000']; // CORS 허용 origin 배열
 
 // CORS 설정
 app.use(cors({
-  origin: corsOrigin,
+  origin: function (origin, callback) {
+    // CORS 허용 origin 배열에 요청 origin이 있는지 확인
+    if (corsOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
   optionsSuccessStatus: 204
