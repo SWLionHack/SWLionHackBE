@@ -31,7 +31,9 @@ const getPostById = async (req, res) => {
 
 // 게시글 작성
 const createPost = async (req, res) => {
-  const { author, title, content } = req.body;
+  //const { author, title, content } = req.body;
+  const author = req.user.id;
+  const { title, content } = req.body;
 
   if (!author || !title || !content) {
     return res.status(400).json({ message: '작성자, 제목 및 내용은 필수입니다.' });
