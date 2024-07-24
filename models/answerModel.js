@@ -1,13 +1,13 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../sequelize'); // sequelize 설정 파일 경로
 
-const Answer = sequelize.define('Comment', {
-  commentID: {
+const Answer = sequelize.define('Answer', {
+  answerID: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true
   },
-  postID: {
+  questionID: {
     type: DataTypes.INTEGER,
     allowNull:false
   },
@@ -29,8 +29,8 @@ const Answer = sequelize.define('Comment', {
     defaultValue: DataTypes.NOW
   }
 }, {
-  tableName: 'comments',
+  tableName: 'anwers',
   timestamps: false
 });
 
-module.exports = Comment;
+module.exports = Answer;

@@ -6,13 +6,15 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const router = require('./routes/router');
 const postRouter = require('./routes/postRouter');
-//const questionRouter = require('./routes/questionRouter.js');
+const questionRouter = require('./routes/questionRouter.js');
 const commentRouter = require('./routes/commentRouter');
+const answerRouter = require('./routes/answerRouter.js');
 const sequelize = require('./sequelize');
 const User = require('./models/User');
 const Post = require('./models/postModel.js');
 const Comment = require('./models/commentModel');
-//const Question = require('./models/questionModel.js');
+const Question = require('./models/questionModel.js');
+const Answer = require('./models/answerModel.js');
 const { getTest } = require('./test/testRepository.js');
 
 
@@ -67,13 +69,21 @@ const initializeApp = async () => {
 
     console.log('Mock comment data inserted');
 
-    // await Question.bulkCreate([
-    //   { author: 111, title: '첫 번째 질문글', status:'자녀', content: '이것은 첫 번째 게시글입니다.', createdAt: new Date() },
-    //   { author: 222, title: '두 번째 질문글', status:'부모', content: '이것은 두 번째 게시글입니다.', createdAt: new Date() },
-    //   { author: 333, title: '세 번째 질문글', status:'자녀', content: '이것은 세 번째 게시글입니다.', createdAt: new Date() },
-    // ]);
+    await Question.bulkCreate([
+      { author: 111, title: '첫 번째 질문글', status:'child', content: '이것은 첫 번째 게시글입니다.', createdAt: new Date() },
+      { author: 222, title: '두 번째 질문글', status:'parent', content: '이것은 두 번째 게시글입니다.', createdAt: new Date() },
+      { author: 333, title: '세 번째 질문글', status:'parent', content: '이것은 세 번째 게시글입니다.', createdAt: new Date() },
+    ]);
 
-    // console.log('Mock question data inserted');
+    console.log('Mock question data inserted');
+
+    await Answer.bulkCreate([
+      { questionID: 111, author: 1, status: 'child', content: '첫 번째 댓글', createdAt: new Date() },
+      { questionID: 222, author: 2, status: 'parent', content: '두 번째 댓글', createdAt: new Date() },
+      { questionID: 333, author: 3, status: 'expert', content: '세 번째 댓글', createdAt: new Date() },
+    ])
+
+    console.log('Mock answer data inserted');
 
   } catch (error) {
     console.error('Unable to connect to the database:', error);
@@ -88,7 +98,8 @@ app.set('views', path.join(__dirname, 'src', 'views'));
 app.use("/", router);
 app.use("/", postRouter);
 app.use("/", commentRouter);
-//app.use("/", questionRouter);
+app.use("/", questionRouter);
+app.use("/", answerRouter);
 
 app.get('/test', async (req, res) => {
   try {

@@ -4,7 +4,10 @@ const { authenticateJWT } = require('../middleware/authMiddleware');
 const questionController = require('../controllers/questionController');
 
 // 모든 게시글 조회
-router.get('/questions', questionController.getAllQuestions);
+router.get('/questions',authenticateJWT, questionController.getAllQuestions);
+
+router.get('/questions/titles', authenticateJWT, questionController.getAllQuestionTitles);
+router.get('/questions/contents', authenticateJWT, questionController.getAllQuestionContents);
 
 // 특정 게시글 조회
 router.get('/questions/:questionID', questionController.getQuestionById);

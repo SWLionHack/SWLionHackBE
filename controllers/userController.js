@@ -33,11 +33,20 @@ const login = async (req, res) => {
 
     const token = jwt.sign({ id: user.id, email: user.email, status: user.status }, JWT_SECRET, { expiresIn: '1h' });
 
-    return res.status(200).json({ message: '로그인이 완료되었습니다.', token });
+    // JWT 토큰을 쿠키에 저장
+    res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+
+    return res.status(200).json({ message: '로그인이 완료되었습니다.' });
   } catch (err) {
     console.error(err);
     return res.status(500).send('Internal server error');
   }
+};
+
+// 로그아웃 처리
+const logout = (req, res) => {
+  res.clearCookie('token');
+  return res.status(200).json({ message: '로그아웃이 완료되었습니다.' });
 };
 
 // 회원가입 처리
@@ -47,23 +56,13 @@ const signUp = async (req, res) => {
   const { name, phone, status, email, password, confirmPassword } = req.body;
 
   // 필수 정보가 모두 있는지 확인
-  if (!name || !phone || !email || !password || !confirmPassword) {
+  if (!name || !phone || !email || !password || !confirmPassword || !status) {
     return res.status(400).send('정보를 모두 입력하세요');
   }
 
   // 비밀번호 확인
   if (password !== confirmPassword) {
     return res.status(400).send('비밀번호가 일치하지 않습니다');
-  }
-
-  // status 변환
-  let convertedStatus;
-  if (status === 'parent') {
-    convertedStatus = 'parent';
-  } else if (status === '자녀') {
-    convertedStatus = 'child';
-  } else {
-    return res.status(400).send('올바른 상태 값을 입력하세요');
   }
 
   try {
@@ -81,7 +80,7 @@ const signUp = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // 사용자 생성
-    const newUser = await User.create({ name, phone, email, password: hashedPassword, status: convertedStatus });
+    const newUser = await User.create({ name, phone, email, password: hashedPassword, status });
     console.log('New user created:', newUser);
     return res.status(201).send('회원가입이 완료되었습니다.');
   } catch (err) {
@@ -95,10 +94,29 @@ const protectedRoute = (req, res) => {
   res.status(200).send('This is a protected route');
 };
 
+// 사용자 정보 제공
+const UserInfo = async (req, res) => {
+  try {
+    const userId = req.user.id; // 인증 미들웨어를 통해 설정된 사용자 ID
+    const user = await User.findByPk(userId, { attributes: ['name', 'status','phone', 'email'] });
+
+    if (!user) {
+      return res.status(404).send('사용자를 찾을 수 없습니다.');
+    }
+
+    res.status(200).json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal server error');
+  }
+};
+
 module.exports = {
   getLoginPage,
   getSignUpPage,
   login,
   signUp,
-  protectedRoute
+  protectedRoute,
+  UserInfo,
+  logout 
 };
