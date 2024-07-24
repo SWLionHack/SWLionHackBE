@@ -4,14 +4,14 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
+const cookieParser = require('cookie-parser'); // 추가된 부분
 const router = require('./routes/router');
 const postRouter = require('./routes/postRouter');
 const sequelize = require('./sequelize');
 const User = require('./models/User');
 const postModel = require('./models/postModel.js');
+const Diary = require('./models/Diary');
 const { getTest } = require('./test/testRepository.js');
-
-
 
 const app = express();
 const port = process.env.PORT || 8181;
@@ -33,6 +33,7 @@ app.use(cors({
 
 app.use(bodyParser.json()); // JSON 요청 본문 파싱 설정
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser()); // 추가된 부분
 
 const initializeApp = async () => {
   try {
