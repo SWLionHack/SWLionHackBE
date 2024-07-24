@@ -13,7 +13,7 @@ const getCommentsByPostId = async (req, res) => {
         where: { postID },
         include: [{
           model: User,
-          attributes: ['name', 'status']
+          attributes: ['id', 'status']
         }]
       });
       res.status(200).json(comments);
