@@ -2,30 +2,160 @@ const { Op } = require('sequelize');
 const Post = require('../models/postModel');
 const jwt = require('jsonwebtoken');
 
-// 모든 게시글 조회 + 페이징 기능 추가
+// // 모든 게시글 조회 + 페이징 기능 추가
+// const getAllPosts = async (req, res) => {
+//   const page = parseInt(req.query.page) || 1;
+//   const size = parseInt(req.query.size) || 10;
+//   const offset = (page - 1) * size;
+//   const limit = size;
+
+//   try {
+//     const {count, rows}= await Post.findAndCountAll({
+//       offset,
+//       limit
+//     });
+
+//     res.status(200).json({
+//       totalItems: count,
+//       totlaPages: Math.ceil(count / size),
+//       currentPage:page,
+//       posts:rows
+//     });
+//     //const posts = await Post.findAll();
+//     //res.status(200).json(posts);
+//   } catch (error) {
+//     console.error('게시글 조회 중 오류가 발생했습니다:', error);
+//     res.status(500).json({ message: '게시글 조회 중 오류가 발생했습니다' });
+//   }
+// };
+
+// const getAllPostTitles = async (req, res) => {
+//   const page = parseInt(req.query.page) || 1;
+//   const size = parseInt(req.query.size) || 10;
+//   const offset = (page - 1) * size;
+//   const limit = size;
+
+//   try {
+//     const { count, rows } = await Post.findAndCountAll({
+//       attributes: ['title'],
+//       offset,
+//       limit
+//     });
+
+//     res.status(200).json({
+//       totalItems: count,
+//       totalPages: Math.ceil(count / size),
+//       currentPage: page,
+//       posts: rows
+//     });
+//   } catch (error) {
+//     console.error('제목 조회 중 오류가 발생했습니다:', error);
+//     res.status(500).json({ message: '제목 조회 중 오류가 발생했습니다' });
+//   }
+// };
+
+// const getAllPostContents = async (req, res) => {
+//   const page = parseInt(req.query.page) || 1;
+//   const size = parseInt(req.query.size) || 10;
+//   const offset = (page - 1) * size;
+//   const limit = size;
+
+//   try {
+//     const { count, rows } = await Post.findAndCountAll({
+//       attributes: ['content'],
+//       offset,
+//       limit
+//     });
+
+//     res.status(200).json({
+//       totalItems: count,
+//       totalPages: Math.ceil(count / size),
+//       currentPage: page,
+//       posts: rows
+//     });
+//   } catch (error) {
+//     console.error('내용 조회 중 오류가 발생했습니다:', error);
+//     res.status(500).json({ message: '내용 조회 중 오류가 발생했습니다' });
+//   }
+// };
+
 const getAllPosts = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const size = parseInt(req.query.size) || 10;
+  const status = req.user.status; // Assume this contains either '부모' or '자녀'
   const offset = (page - 1) * size;
   const limit = size;
 
   try {
-    const {count, rows}= await Post.findAndCountAll({
+    const { count, rows } = await Post.findAndCountAll({
+      where: { status }, // Filter by status
       offset,
       limit
     });
 
     res.status(200).json({
       totalItems: count,
-      totlaPages: Math.ceil(count / size),
-      currentPage:page,
-      posts:rows
+      totalPages: Math.ceil(count / size),
+      currentPage: page,
+      posts: rows
     });
-    //const posts = await Post.findAll();
-    //res.status(200).json(posts);
   } catch (error) {
     console.error('게시글 조회 중 오류가 발생했습니다:', error);
     res.status(500).json({ message: '게시글 조회 중 오류가 발생했습니다' });
+  }
+};
+
+const getAllPostTitles = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const size = parseInt(req.query.size) || 10;
+  const status = req.user.status; // Assume this contains either '부모' or '자녀'
+  const offset = (page - 1) * size;
+  const limit = size;
+
+  try {
+    const { count, rows } = await Post.findAndCountAll({
+      attributes: ['title'],
+      where: { status }, // Filter by status
+      offset,
+      limit
+    });
+
+    res.status(200).json({
+      totalItems: count,
+      totalPages: Math.ceil(count / size),
+      currentPage: page,
+      posts: rows
+    });
+  } catch (error) {
+    console.error('제목 조회 중 오류가 발생했습니다:', error);
+    res.status(500).json({ message: '제목 조회 중 오류가 발생했습니다' });
+  }
+};
+
+const getAllPostContents = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const size = parseInt(req.query.size) || 10;
+  const status = req.user.status; // Assume this contains either '부모' or '자녀'
+  const offset = (page - 1) * size;
+  const limit = size;
+
+  try {
+    const { count, rows } = await Post.findAndCountAll({
+      attributes: ['content'],
+      where: { status }, // Filter by status
+      offset,
+      limit
+    });
+
+    res.status(200).json({
+      totalItems: count,
+      totalPages: Math.ceil(count / size),
+      currentPage: page,
+      posts: rows
+    });
+  } catch (error) {
+    console.error('내용 조회 중 오류가 발생했습니다:', error);
+    res.status(500).json({ message: '내용 조회 중 오류가 발생했습니다' });
   }
 };
 
@@ -128,6 +258,8 @@ const deletePost = async (req, res) => {
 
 module.exports = {
   getAllPosts,
+  getAllPostTitles,
+  getAllPostContents,
   getPostById,
   createPost,
   updatePost,
