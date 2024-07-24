@@ -2,7 +2,7 @@ const { Op } = require('sequelize');
 const Post = require('../models/postModel');
 const jwt = require('jsonwebtoken');
 
-// 모든 게시글 조회
+// 자신의 모든 게시글 조회
 const getAllPosts = async (req, res) => {
   try {
     const posts = await Post.findAll();

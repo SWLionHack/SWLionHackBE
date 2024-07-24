@@ -79,17 +79,43 @@ const checkDiary = async (req, res) => {
 };
 
 // 로그인한 사용자의 모든 일기 조회
+// const allDiaries = async (req, res) => {
+//   const userId = req.user.id;
+
+//   try {
+//     const diaries = await Diary.findAll({ where: { userId } });
+//     res.status(200).json(diaries);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send('Internal server error');
+//   }
+// };
 const allDiaries = async (req, res) => {
   const userId = req.user.id;
+  const page = parseInt(req.query.page) || 1;
+  const size = parseInt(req.query.size) || 10;
+  const offset = (page - 1) * size;
+  const limit = size;
 
   try {
-    const diaries = await Diary.findAll({ where: { userId } });
-    res.status(200).json(diaries);
+    const { count, rows } = await Diary.findAndCountAll({
+      where: { userId },
+      offset,
+      limit
+    });
+
+    res.status(200).json({
+      totalItems: count,
+      totalPages: Math.ceil(count / size),
+      currentPage: page,
+      diaries: rows
+    });
   } catch (err) {
-    console.error(err);
+    console.error('Internal server error:', err);
     res.status(500).send('Internal server error');
   }
 };
+
 
 module.exports = {
   createDiary,
