@@ -10,11 +10,7 @@ const getCommentsByPostId = async (req, res) => {
   
     try {
       const comments = await Comment.findAll({
-        where: { postID },
-        include: [{
-          model: User,
-          attributes: ['name', 'status']
-        }]
+        where: { postID }
       });
       res.status(200).json(comments);
     } catch (error) {

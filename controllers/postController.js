@@ -49,11 +49,6 @@ const getPostById = async (req, res) => {
 const createPost = async (req, res) => {
   //const { author, title, content } = req.body;
   const author = req.user.id;
-  //기능 test를 위한 작성자 추가
-  if (!author) {
-    author = 9999999;
-  }
-  //윗부분 지울것
   const status = req.user.status;
   const { title, content } = req.body;
 
