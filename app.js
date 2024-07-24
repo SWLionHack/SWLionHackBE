@@ -14,7 +14,6 @@ const Comment = require('./models/commentModel');
 const { getTest } = require('./test/testRepository.js');
 
 
-
 const app = express();
 const port = process.env.PORT || 8181;
 const corsOrigins = [process.env.CORS_ORIGIN || 'http://localhost', 'http://localhost:3000']; // CORS 허용 origin 배열
