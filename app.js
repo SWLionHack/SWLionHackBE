@@ -5,8 +5,9 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser'); // 추가된 부분
-const router = require('./routes/router');
+const userRouter = require('./routes/userRouter');
 const postRouter = require('./routes/postRouter');
+const diaryRouter = require('./routes/diaryRouter');
 const sequelize = require('./sequelize');
 const User = require('./models/User');
 const postModel = require('./models/postModel.js');
@@ -59,8 +60,10 @@ initializeApp();
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('views', path.join(__dirname, 'src', 'views'));
 
-app.use("/", router);
+app.use("/", userRouter);
 app.use("/", postRouter);
+app.use("/", diaryRouter);
+
 
 app.get('/test', async (req, res) => {
   try {
