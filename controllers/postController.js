@@ -2,11 +2,27 @@ const { Op } = require('sequelize');
 const Post = require('../models/postModel');
 const jwt = require('jsonwebtoken');
 
-// 모든 게시글 조회
+// 모든 게시글 조회 + 페이징 기능 추가
 const getAllPosts = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const size = parseInt(req.query.size) || 10;
+  const offset = (page - 1) * size;
+  const limit = size;
+
   try {
-    const posts = await Post.findAll();
-    res.status(200).json(posts);
+    const {count, rows}= await Post.findAndCountAll({
+      offset,
+      limit
+    });
+
+    res.status(200).json({
+      totalItems: count,
+      totlaPages: Math.ceil(count / size),
+      currentPage:page,
+      posts:rows
+    });
+    //const posts = await Post.findAll();
+    //res.status(200).json(posts);
   } catch (error) {
     console.error('게시글 조회 중 오류가 발생했습니다:', error);
     res.status(500).json({ message: '게시글 조회 중 오류가 발생했습니다' });
@@ -33,6 +49,11 @@ const getPostById = async (req, res) => {
 const createPost = async (req, res) => {
   //const { author, title, content } = req.body;
   const author = req.user.id;
+  //기능 test를 위한 작성자 추가
+  if (!author) {
+    author = 9999999;
+  }
+  //윗부분 지울것
   const status = req.user.status;
   const { title, content } = req.body;
 
