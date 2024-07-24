@@ -6,9 +6,11 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const router = require('./routes/router');
 const postRouter = require('./routes/postRouter');
+const commentRouter = require('./routes/commentRouter');
 const sequelize = require('./sequelize');
 const User = require('./models/User');
-const postModel = require('./models/postModel.js');
+const Post = require('./models/postModel.js');
+const Comment = require('./models/commentModel');
 const { getTest } = require('./test/testRepository.js');
 
 
@@ -48,6 +50,22 @@ const initializeApp = async () => {
     ]);
 
     console.log('Mock data inserted');
+    await Post.bulkCreate([
+      { author: 111, title: '첫 번째 게시글', status:'자녀', content: '이것은 첫 번째 게시글입니다.', createdAt: new Date() },
+      { author: 222, title: '두 번째 게시글', status:'부모', content: '이것은 두 번째 게시글입니다.', createdAt: new Date() },
+      { author: 333, title: '세 번째 게시글', status:'자녀', content: '이것은 세 번째 게시글입니다.', createdAt: new Date() },
+    ]);
+
+    console.log('Mock post data inserted');
+
+    await Comment.bulkCreate([
+      { postID: 111, author: 1, status: '자녀', content: '첫 번째 댓글', createdAt: new Date() },
+      { postID: 222, author: 2, status: '부모', content: '두 번째 댓글', createdAt: new Date() },
+      { postID: 333, author: 3, status: '자녀', content: '세 번째 댓글', createdAt: new Date() },
+    ])
+
+    console.log('Mock comment data inserted');
+
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }
@@ -60,6 +78,7 @@ app.set('views', path.join(__dirname, 'src', 'views'));
 
 app.use("/", router);
 app.use("/", postRouter);
+app.use("/", commentRouter);
 
 app.get('/test', async (req, res) => {
   try {
