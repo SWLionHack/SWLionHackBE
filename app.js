@@ -20,15 +20,17 @@ const { getTest } = require('./test/testRepository.js');
 const surveyController = require('./controllers/surveyController.js');
 const surveyRouter = require('./routes/survey'); 
 const SurveyData = require('./models/surveyAnswer.js');
+const chatRouter = require('./routes/chatRouter');
 
-<<<<<<< HEAD
+const Expert = require('./models/Expert');
+const ChatRoom = require('./models/chat/ChatRoom'); // chat 폴더 내 ChatRoom 모델 불러오기
+const Message = require('./models/chat/Message'); // chat 폴더 내 Message 모델 불러오기
+const setupWebSocket = require('./wsServer'); // WebSocket 설정 파일 불러오기
+
 const app = express();
-=======
-const app = express(); // `app` 객체 선언
 
->>>>>>> survey2
 const port = process.env.PORT || 8181;
-const corsOrigins = [process.env.CORS_ORIGIN || 'http://localhost', 'http://localhost:8181'];
+const corsOrigins = [process.env.CORS_ORIGIN || 'http://localhost', 'http://localhost:3000'];
 
 // CORS 설정
 app.use(cors({
@@ -49,12 +51,18 @@ app.use(bodyParser.json()); // JSON 요청 본문 파싱 설정
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public')); // 정적 파일 제공
 
-<<<<<<< HEAD
+// 모델 관계 설정
+User.hasMany(ChatRoom, { foreignKey: 'userId' });
+Expert.hasMany(ChatRoom, { foreignKey: 'expertId' });
+ChatRoom.belongsTo(User, { foreignKey: 'userId' });
+ChatRoom.belongsTo(Expert, { foreignKey: 'expertId' });
+
 const initializeApp = async () => {
   try {
     await sequelize.authenticate();
     console.log('Connection has been established successfully.');
-    await sequelize.sync({ force: true });
+
+    await sequelize.sync({ alter: true });
     console.log('Database synchronized');
 
     await User.bulkCreate([
@@ -63,7 +71,16 @@ const initializeApp = async () => {
       { name: 'Charlie3', phone: '010-3333-3333', email: '789@gmail.com', password: await bcrypt.hash('789', 10), status: "child" },
     ]);
 
-    console.log('Mock data inserted');
+    console.log('User mock data inserted');
+
+    await Expert.bulkCreate([
+      { name: 'Dr. John Doe', phone: '010-4444-4444', email: 'john.doe@example.com', password: await bcrypt.hash('password1', 10), specialization: "심리학" },
+      { name: 'Dr. Jane Smith', phone: '010-5555-5555', email: 'jane.smith@example.com', password: await bcrypt.hash('password2', 10), specialization: "정신의학" },
+      { name: 'Dr. Emily Johnson', phone: '010-6666-6666', email: 'emily.johnson@example.com', password: await bcrypt.hash('password3', 10), specialization: "상담 치료" },
+    ]);
+
+    console.log('Expert mock data inserted');
+
     await Post.bulkCreate([
       { author: 111, title: '첫 번째 게시글', status:'child', content: '이것은 첫 번째 게시글입니다.', createdAt: new Date() },
       { author: 222, title: '두 번째 게시글', status:'parent', content: '이것은 두 번째 게시글입니다.', createdAt: new Date() },
@@ -73,6 +90,7 @@ const initializeApp = async () => {
     console.log('Mock post data inserted');
 
     await Comment.bulkCreate([
+
       { postID: 111, author: 1, status: 'child', content: '첫 번째 댓글', createdAt: new Date() },
       { postID: 222, author: 2, status: 'parent', content: '두 번째 댓글', createdAt: new Date() },
       { postID: 333, author: 3, status: 'child', content: '세 번째 댓글', createdAt: new Date() },
@@ -99,26 +117,23 @@ const initializeApp = async () => {
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }
-}
+};
 
 initializeApp();
 
 app.use(express.static(path.join(__dirname, 'public')));
-=======
+
 // View 엔진 설정
->>>>>>> survey2
 app.set('views', path.join(__dirname, 'src', 'views'));
 
 // 라우터 설정
 app.use("/", router);
 app.use("/", postRouter);
-<<<<<<< HEAD
 app.use("/", commentRouter);
 app.use("/", questionRouter);
 app.use("/", answerRouter);
-=======
 app.use('/', surveyRouter);
->>>>>>> survey2
+app.use("/", chatRouter); // 추가
 
 // 추가 라우트 설정
 app.get('/test', async (req, res) => {
@@ -134,51 +149,9 @@ app.get('/api', (req, res) => {
   res.json({ message: 'Hello, Express!, end point /api' });
 });
 
-// 설문 제목 목록 가져오기
-app.get('/surveys', surveyController.getSurveys);
-
-// 특정 설문에 대한 질문 가져오기
-app.get('/survey/:surveyId', surveyController.getSurveyQuestions);
-
-// 서버 시작
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+const server = app.listen(port, () => {
+  console.log(`Server running on :${port}`);
 });
 
-// 데이터베이스 초기화 및 동기화
-const initializeApp = async () => {
-  try {
-    await sequelize.authenticate();
-    console.log('Connection has been established successfully.');
-
-    // Synchronize the database schema
-    await sequelize.sync({ alter: true }); // alter: true to update schema
-    console.log('Database synchronized');
-
-    // Mock data insertion
-    // Uncomment if you need to seed mock data each time
-    /*
-    await User.bulkCreate([
-      { name: 'Alice', phone: '010-1111-1111', email: 'alice@gmail.com', password: 'hashed_password', status: '자녀' },
-      { name: 'Bob', phone: '010-2222-2222', email: 'bob@gmail.com', password: 'hashed_password', status: '부모' },
-      { name: 'Charlie', phone: '010-3333-3333', email: 'charlie@gmail.com', password: 'hashed_password', status: '자녀' },
-    ]);
-
-    await Survey.bulkCreate([
-      { title: 'Customer Satisfaction Survey' },
-      { title: 'Product Feedback Survey' },
-    ]);
-
-    await Question.bulkCreate([
-      { surveyId: 1, text: 'How satisfied are you with our service?' },
-      { surveyId: 1, text: 'Would you recommend us to others?' },
-      // Add more questions as needed
-    ]);
-    */
-
-  } catch (error) {
-    console.error('Unable to connect to the database:', error);
-  }
-};
-
-initializeApp();
+// WebSocket 서버 설정
+setupWebSocket(server);
