@@ -39,9 +39,16 @@ const getAnswersByQuestionId = async (req, res) => {
       if (!user) {
         return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
       }
-      // 댓글 작성 가능 여부 확인
-      if (question.author !== author && user.status !== 'export') {
-        return res.status(403).json({ message: '댓글 작성 권한이 없습니다.' });
+      
+      //질문 작성자 정보 조회
+      const questionAuthor = await User.findByPk(question.author);
+      if(!questionAuthor) {
+        return res.status(404).json({ message : '질문 작성자를 찾을 수 없습니다.'});
+      }
+
+      // 답변 작성 가능 여부 확인
+      if (question.author !== author && user.age <= questionAuthor.age) {
+        return res.status(403).json({ message: '답변 작성 권한이 없습니다.' });
       }
   
       const newAnswer = await Answer.create({
