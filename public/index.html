@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Application</title>
+    <style>
+        body { font: 13px Helvetica, Arial; }
+        form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+        form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+        form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+        ul { list-style-type: none; margin: 0; padding: 0; }
+        ul li { padding: 8px; margin-bottom: 10px; border-radius: 4px; }
+        .my-message { background: #DCF8C6; text-align: right; }
+        .other-message { background: #F4F4F4; text-align: left; }
+    </style>
+</head>
+<body>
+    <div id="nameInputContainer">
+        <input id="nameInput" placeholder="Enter your name" autocomplete="off" />
+        <button id="nameButton">Join Chat</button>
+    </div>
+    <div id="chatContainer" style="display:none;">
+        <ul id="messages"></ul>
+        <form id="form" action="">
+            <input id="input" autocomplete="off" /><button>Send</button>
+        </form>
+    </div>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script>
+        const socket = io('http://localhost:8181');
+        const form = document.getElementById('form');
+        const input = document.getElementById('input');
+        const messages = document.getElementById('messages');
+        const nameInput = document.getElementById('nameInput');
+        const nameButton = document.getElementById('nameButton');
+        const nameInputContainer = document.getElementById('nameInputContainer');
+        const chatContainer = document.getElementById('chatContainer');
+        let username = '';
+
+        nameButton.addEventListener('click', function() {
+            if (nameInput.value) {
+                username = nameInput.value;
+                nameInputContainer.style.display = 'none';
+                chatContainer.style.display = 'block';
+            }
+        });
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (input.value && username) {
+                const messageData = {
+                    user: username,
+                    message: input.value
+                };
+                socket.emit('chat message', messageData);
+                input.value = '';
+            }
+        });
+
+        socket.on('chat message', function(data) {
+            const item = document.createElement('li');
+            if (data.user === username) {
+                item.classList.add('my-message');
+            } else {
+                item.classList.add('other-message');
+            }
+            item.textContent = `${data.user}: ${data.message}`;
+            messages.appendChild(item);
+            window.scrollTo(0, document.body.scrollHeight);
+        });
+    </script>
+</body>
+</html>

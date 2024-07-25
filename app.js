@@ -1,5 +1,8 @@
 require('dotenv').config();
 const express = require('express');
+const http = require('http');
+const socketIo = require('socket.io');
+const chatRouter = require('./routes/chat');
 const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -19,6 +22,13 @@ const { getTest } = require('./test/testRepository.js');
 
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    method:["GET", "POST"]
+  }
+});
 const port = process.env.PORT || 8181;
 const corsOrigins = [process.env.CORS_ORIGIN || 'http://localhost', 'http://localhost:3000']; // CORS 허용 origin 배열
 
@@ -92,6 +102,9 @@ const initializeApp = async () => {
 
 initializeApp();
 
+app.use(express.json());
+app.use(express.urlencoded({ extented:true}));
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('views', path.join(__dirname, 'src', 'views'));
 
@@ -101,6 +114,11 @@ app.use("/", commentRouter);
 app.use("/", questionRouter);
 app.use("/", answerRouter);
 
+// 정적 파일 서빙
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/chat', chatRouter);
+
+
 app.get('/test', async (req, res) => {
   try {
     const data = await getTest();
@@ -108,6 +126,19 @@ app.get('/test', async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: 'Database Error', error: err.message });
   }
+});
+
+// Socket.IO 이벤트 핸들링
+io.on('connection', (socket) => {
+  console.log('a user connected');
+
+  socket.on('disconnect', () => {
+      console.log('user disconnected');
+  });
+
+  socket.on('chat message', (msg) => {
+      io.emit('chat message', msg);
+  });
 });
 
 app.get('/api', (req, res) => {
