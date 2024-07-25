@@ -36,17 +36,11 @@ const login = async (req, res) => {
     // JWT 토큰을 쿠키에 저장
     res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
 
-    return res.status(200).json({ message: '로그인이 완료되었습니다.' });
+    return res.status(200).json({ message: '로그인이 완료되었습니다.', token });
   } catch (err) {
     console.error(err);
     return res.status(500).send('Internal server error');
   }
-};
-
-// 로그아웃 처리
-const logout = (req, res) => {
-  res.clearCookie('token');
-  return res.status(200).json({ message: '로그아웃이 완료되었습니다.' });
 };
 
 // 회원가입 처리
@@ -56,7 +50,7 @@ const signUp = async (req, res) => {
   const { name, phone, status, email, password, confirmPassword } = req.body;
 
   // 필수 정보가 모두 있는지 확인
-  if (!name || !phone || !email || !password || !confirmPassword || !status) {
+  if (!name || !phone || !email || !password || !confirmPassword ||!status) {
     return res.status(400).send('정보를 모두 입력하세요');
   }
 
@@ -88,27 +82,14 @@ const signUp = async (req, res) => {
     return res.status(500).send('Internal server error');
   }
 };
+const logOut = (req, res) => {
+  res.clearCookie('token');
+  return res.status(200).json({ message: '로그아웃이 완료되었습니다.' });
+};
 
 // 보호된 경로
 const protectedRoute = (req, res) => {
   res.status(200).send('This is a protected route');
-};
-
-// 사용자 정보 제공
-const UserInfo = async (req, res) => {
-  try {
-    const userId = req.user.id; // 인증 미들웨어를 통해 설정된 사용자 ID
-    const user = await User.findByPk(userId, { attributes: ['name', 'status','phone', 'email'] });
-
-    if (!user) {
-      return res.status(404).send('사용자를 찾을 수 없습니다.');
-    }
-
-    res.status(200).json(user);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Internal server error');
-  }
 };
 
 module.exports = {
@@ -116,7 +97,6 @@ module.exports = {
   getSignUpPage,
   login,
   signUp,
-  protectedRoute,
-  UserInfo,
-  logout 
+  logOut,
+  protectedRoute
 };
