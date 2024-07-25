@@ -23,6 +23,10 @@ const User = sequelize.define('User', {
   status: {
     type: DataTypes.STRING,
     allowNull: false
+  },
+  age: {
+    type: DataTypes.INTEGER,
+    allowNull:false
   }
 }, {
   tableName: 'user',
