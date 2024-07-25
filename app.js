@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
 const router = require('./routes/router');
 const postRouter = require('./routes/postRouter');
@@ -45,6 +46,7 @@ app.use(cors({
   optionsSuccessStatus: 204
 }));
 
+app.use(cookieParser()); // 쿠키 파서 미들웨어 추가
 app.use(bodyParser.json()); 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public')); 
@@ -79,10 +81,24 @@ const initializeApp = async () => {
     console.log('Expert mock data inserted');
 
     await Post.bulkCreate([
-      { author: 1, title: '첫 번째 게시글', status: 'child', content: '이것은 첫 번째 게시글입니다.', createdAt: new Date() },
-      { author: 2, title: '두 번째 게시글', status: 'parent', content: '이것은 두 번째 게시글입니다.', createdAt: new Date() },
-      { author: 3, title: '세 번째 게시글', status: 'child', content: '이것은 세 번째 게시글입니다.', createdAt: new Date() },
-    ]);
+      { author: 1, status: 'child', title: '첫 번째 게시글', content: '이것은 첫 번째 게시글의 내용입니다.', createdAt: new Date() },
+    { author: 2, status: 'parent', title: '두 번째 게시글', content: '이것은 두 번째 게시글의 내용입니다.', createdAt: new Date() },
+    { author: 3, status: 'child', title: '세 번째 게시글', content: '이것은 세 번째 게시글의 내용입니다.', createdAt: new Date() },
+    { author: 4, status: 'parent', title: '네 번째 게시글', content: '이것은 네 번째 게시글의 내용입니다.', createdAt: new Date() },
+    { author: 5, status: 'child', title: '다섯 번째 게시글', content: '이것은 다섯 번째 게시글의 내용입니다.', createdAt: new Date() },
+    { author: 6, status: 'parent', title: '여섯 번째 게시글', content: '이것은 여섯 번째 게시글의 내용입니다.', createdAt: new Date() },
+    { author: 7, status: 'child', title: '일곱 번째 게시글', content: '이것은 일곱 번째 게시글의 내용입니다.', createdAt: new Date() },
+    { author: 8, status: 'parent', title: '여덟 번째 게시글', content: '이것은 여덟 번째 게시글의 내용입니다.', createdAt: new Date() },
+    { author: 9, status: 'child', title: '아홉 번째 게시글', content: '이것은 아홉 번째 게시글의 내용입니다.', createdAt: new Date() },
+    { author: 10, status: 'parent', title: '열 번째 게시글', content: '이것은 열 번째 게시글의 내용입니다.', createdAt: new Date() },
+    { author: 1, status: 'child', title: '열한 번째 게시글', content: '이것은 열한 번째 게시글의 내용입니다.', createdAt: new Date() },
+    { author: 2, status: 'parent', title: '열두 번째 게시글', content: '이것은 열두 번째 게시글의 내용입니다.', createdAt: new Date() },
+    { author: 3, status: 'child', title: '열세 번째 게시글', content: '이것은 열세 번째 게시글의 내용입니다.', createdAt: new Date() },
+    { author: 4, status: 'parent', title: '열네 번째 게시글', content: '이것은 열네 번째 게시글의 내용입니다.', createdAt: new Date() },
+    { author: 5, status: 'child', title: '열다섯 번째 게시글', content: '이것은 열다섯 번째 게시글의 내용입니다.', createdAt: new Date() },
+    { author: 6, status: 'parent', title: '열여섯 번째 게시글', content: '이것은 열여섯 번째 게시글의 내용입니다.', createdAt: new Date() },
+    { author: 7, status: 'child', title: '열일곱 번째 게시글', content: '이것은 열일곱 번째 게시글의 내용입니다.', createdAt: new Date() },
+   ]);
 
     console.log('Mock post data inserted');
 

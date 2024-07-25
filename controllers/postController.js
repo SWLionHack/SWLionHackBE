@@ -2,110 +2,9 @@ const { Op } = require('sequelize');
 const Post = require('../models/postModel');
 const jwt = require('jsonwebtoken');
 
-// // 모든 게시글 조회 + 페이징 기능 추가
-// const getAllPosts = async (req, res) => {
-//   const page = parseInt(req.query.page) || 1;
-//   const size = parseInt(req.query.size) || 10;
-//   const offset = (page - 1) * size;
-//   const limit = size;
-
-//   try {
-//     const {count, rows}= await Post.findAndCountAll({
-//       offset,
-//       limit
-//     });
-
-//     res.status(200).json({
-//       totalItems: count,
-//       totlaPages: Math.ceil(count / size),
-//       currentPage:page,
-//       posts:rows
-//     });
-//     //const posts = await Post.findAll();
-//     //res.status(200).json(posts);
-//   } catch (error) {
-//     console.error('게시글 조회 중 오류가 발생했습니다:', error);
-//     res.status(500).json({ message: '게시글 조회 중 오류가 발생했습니다' });
-//   }
-// };
-
-// const getAllPostTitles = async (req, res) => {
-//   const page = parseInt(req.query.page) || 1;
-//   const size = parseInt(req.query.size) || 10;
-//   const offset = (page - 1) * size;
-//   const limit = size;
-
-//   try {
-//     const { count, rows } = await Post.findAndCountAll({
-//       attributes: ['title'],
-//       offset,
-//       limit
-//     });
-
-//     res.status(200).json({
-//       totalItems: count,
-//       totalPages: Math.ceil(count / size),
-//       currentPage: page,
-//       posts: rows
-//     });
-//   } catch (error) {
-//     console.error('제목 조회 중 오류가 발생했습니다:', error);
-//     res.status(500).json({ message: '제목 조회 중 오류가 발생했습니다' });
-//   }
-// };
-
-// const getAllPostContents = async (req, res) => {
-//   const page = parseInt(req.query.page) || 1;
-//   const size = parseInt(req.query.size) || 10;
-//   const offset = (page - 1) * size;
-//   const limit = size;
-
-//   try {
-//     const { count, rows } = await Post.findAndCountAll({
-//       attributes: ['content'],
-//       offset,
-//       limit
-//     });
-
-//     res.status(200).json({
-//       totalItems: count,
-//       totalPages: Math.ceil(count / size),
-//       currentPage: page,
-//       posts: rows
-//     });
-//   } catch (error) {
-//     console.error('내용 조회 중 오류가 발생했습니다:', error);
-//     res.status(500).json({ message: '내용 조회 중 오류가 발생했습니다' });
-//   }
-// };
-
-const getAllPosts = async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const size = parseInt(req.query.size) || 10;
-  const status = req.user.status; // Assume this contains either '부모' or '자녀'
-  const offset = (page - 1) * size;
-  const limit = size;
-
-  try {
-    const { count, rows } = await Post.findAndCountAll({
-      where: { status }, // Filter by status
-      offset,
-      limit
-    });
-
-    res.status(200).json({
-      totalItems: count,
-      totalPages: Math.ceil(count / size),
-      currentPage: page,
-      posts: rows
-    });
-  } catch (error) {
-    console.error('게시글 조회 중 오류가 발생했습니다:', error);
-    res.status(500).json({ message: '게시글 조회 중 오류가 발생했습니다' });
-  }
-};
-
 const getAllPostTitles = async (req, res) => {
+  const loginId = req.user.id;
+
   const page = parseInt(req.query.page) || 1;
   const size = parseInt(req.query.size) || 10;
   const status = req.user.status; // Assume this contains either '부모' or '자녀'
@@ -114,17 +13,22 @@ const getAllPostTitles = async (req, res) => {
 
   try {
     const { count, rows } = await Post.findAndCountAll({
-      attributes: ['title'],
+      attributes: ['postID', 'title', 'author'],
       where: { status }, // Filter by status
       offset,
       limit
     });
 
+    const posts = rows.map(post => ({
+      ...post.toJSON(),
+      isAuthor: post.author === loginId // 로그인한 사용자가 작성자인지 확인
+    }));
+
     res.status(200).json({
       totalItems: count,
       totalPages: Math.ceil(count / size),
       currentPage: page,
-      posts: rows
+      posts
     });
   } catch (error) {
     console.error('제목 조회 중 오류가 발생했습니다:', error);
@@ -132,36 +36,12 @@ const getAllPostTitles = async (req, res) => {
   }
 };
 
-const getAllPostContents = async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const size = parseInt(req.query.size) || 10;
-  const status = req.user.status; // Assume this contains either '부모' or '자녀'
-  const offset = (page - 1) * size;
-  const limit = size;
-
-  try {
-    const { count, rows } = await Post.findAndCountAll({
-      attributes: ['content'],
-      where: { status }, // Filter by status
-      offset,
-      limit
-    });
-
-    res.status(200).json({
-      totalItems: count,
-      totalPages: Math.ceil(count / size),
-      currentPage: page,
-      posts: rows
-    });
-  } catch (error) {
-    console.error('내용 조회 중 오류가 발생했습니다:', error);
-    res.status(500).json({ message: '내용 조회 중 오류가 발생했습니다' });
-  }
-};
-
 // 특정 게시글 조회
 const getPostById = async (req, res) => {
+  
+  console.log('getPostById called'); // 함수 호출 여부 확인
   const { postID } = req.params;
+  console.log('Post ID:', postID); // 요청된 postID 확인
 
   try {
     const post = await Post.findByPk(postID);
@@ -201,39 +81,6 @@ const createPost = async (req, res) => {
   }
 };
 
-// 게시글 수정
-const updatePost = async (req, res) => {
-  const { postID } = req.params;
-  //const { author, title, content } = req.body;
-  const updateId = req.user.id;
-  const {title, content }=req.body;
-
-  if (!title || !content) {
-    return res.status(400).json({ message: '제목 및 내용은 필수입니다.' });
-  }
-
-  try {
-    const post = await Post.findByPk(postID);
-    if (!post) {
-      return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' });
-    }
-
-    if(post.author !== updateId) {
-        return res.status(403).json({ message: '수정 권한이 없습니다.', postAuthor: post.author, updateId});
-    }
-
-    //post.author = author;
-    post.title = title;
-    post.content = content;
-    await post.save();
-
-    res.status(200).json(post);
-  } catch (error) {
-    console.error('게시글 수정 중 오류가 발생했습니다:', error);
-    res.status(500).json({ message: '게시글 수정 중 오류가 발생했습니다' });
-  }
-};
-
 // 게시글 삭제
 const deletePost = async (req, res) => {
   const { postID } = req.params;
@@ -257,11 +104,8 @@ const deletePost = async (req, res) => {
 };
 
 module.exports = {
-  getAllPosts,
   getAllPostTitles,
-  getAllPostContents,
   getPostById,
   createPost,
-  updatePost,
   deletePost
 };

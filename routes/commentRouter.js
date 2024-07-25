@@ -4,7 +4,7 @@ const { authenticateJWT } = require('../middleware/authMiddleware');
 const commentController = require('../controllers/commentController');
 
 // 특정 게시글에 달린 모든 댓글 조회
-router.get('/posts/:postID/comments', commentController.getCommentsByPostId);
+router.get('/posts/:postID/comments', authenticateJWT, commentController.getCommentsByPostId);
 
 // 댓글 작성
 router.post('/posts/:postID/comments', authenticateJWT, commentController.createComment);
