@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../sequelize');
+const ChatRoom = require('./ChatRoom'); // ChatRoom 모델 불러오기
 
 const Message = sequelize.define('Message', {
   id: {
@@ -11,7 +12,7 @@ const Message = sequelize.define('Message', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'ChatRoom',
+      model: 'chatrooms',
       key: 'id'
     }
   },
@@ -33,7 +34,7 @@ const Message = sequelize.define('Message', {
     defaultValue: DataTypes.NOW
   }
 }, {
-  tableName: 'message',
+  tableName: 'messages',
   timestamps: false
 });
 

@@ -31,7 +31,7 @@ const ChatRoom = sequelize.define('ChatRoom', {
     allowNull: false
   }
 }, {
-  tableName: 'chatroom',
+  tableName: 'chatrooms',
   timestamps: false
 });
 

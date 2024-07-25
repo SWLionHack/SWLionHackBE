@@ -18,8 +18,3 @@ router.get('/survey/:survey_id/answers', surveyController.getSurveyAnswers);
 
 
 module.exports = router;
-
-
-
-// 설문 질문을 데이터베이스에 저장하는 코드
-//router.post('/survey/:id/create', surveyController.getQuestions);

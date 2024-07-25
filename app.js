@@ -11,28 +11,27 @@ const commentRouter = require('./routes/commentRouter');
 const answerRouter = require('./routes/answerRouter.js');
 const sequelize = require('./sequelize');
 const User = require('./models/User');
-const Post = require('./models/postModel.js');
-const Comment = require('./models/commentModel');
-const Question = require('./models/questionModel.js');
-const Answer = require('./models/answerModel.js');
-const { getTest } = require('./test/testRepository.js');
 
-const surveyController = require('./controllers/surveyController.js');
-const surveyRouter = require('./routes/survey'); 
-const SurveyData = require('./models/surveyAnswer.js');
+const Post = require('./models/postModel');
+const Comment = require('./models/commentModel');
+
+const Question = require('./models/questionModel');
+const Answer = require('./models/answerModel');
+const surveyRouter = require('./routes/surveyRouter'); 
+const SurveyQuestion = require('./models/surveyQuestions');
+const SurveyAnswer = require('./models/surveyAnswer');
 const chatRouter = require('./routes/chatRouter');
 
 const Expert = require('./models/Expert');
-const ChatRoom = require('./models/chat/ChatRoom'); // chat 폴더 내 ChatRoom 모델 불러오기
-const Message = require('./models/chat/Message'); // chat 폴더 내 Message 모델 불러오기
-const setupWebSocket = require('./wsServer'); // WebSocket 설정 파일 불러오기
+const ChatRoom = require('./models/chat/ChatRoom'); 
+const Message = require('./models/chat/Message'); 
+const setupWebSocket = require('./wsServer'); 
 
 const app = express();
 
 const port = process.env.PORT || 8181;
 const corsOrigins = [process.env.CORS_ORIGIN || 'http://localhost', 'http://localhost:3000'];
 
-// CORS 설정
 app.use(cors({
   origin: function (origin, callback) {
     if (corsOrigins.indexOf(origin) !== -1 || !origin) {
@@ -46,12 +45,10 @@ app.use(cors({
   optionsSuccessStatus: 204
 }));
 
-// Middleware 설정
-app.use(bodyParser.json()); // JSON 요청 본문 파싱 설정
+app.use(bodyParser.json()); 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static('public')); // 정적 파일 제공
+app.use(express.static('public')); 
 
-// 모델 관계 설정
 User.hasMany(ChatRoom, { foreignKey: 'userId' });
 Expert.hasMany(ChatRoom, { foreignKey: 'expertId' });
 ChatRoom.belongsTo(User, { foreignKey: 'userId' });
@@ -61,8 +58,8 @@ const initializeApp = async () => {
   try {
     await sequelize.authenticate();
     console.log('Connection has been established successfully.');
-
-    await sequelize.sync({ alter: true });
+    
+    await sequelize.sync({ force: true });
     console.log('Database synchronized');
 
     await User.bulkCreate([
@@ -82,37 +79,57 @@ const initializeApp = async () => {
     console.log('Expert mock data inserted');
 
     await Post.bulkCreate([
-      { author: 111, title: '첫 번째 게시글', status:'child', content: '이것은 첫 번째 게시글입니다.', createdAt: new Date() },
-      { author: 222, title: '두 번째 게시글', status:'parent', content: '이것은 두 번째 게시글입니다.', createdAt: new Date() },
-      { author: 333, title: '세 번째 게시글', status:'child', content: '이것은 세 번째 게시글입니다.', createdAt: new Date() },
+      { author: 1, title: '첫 번째 게시글', status: 'child', content: '이것은 첫 번째 게시글입니다.', createdAt: new Date() },
+      { author: 2, title: '두 번째 게시글', status: 'parent', content: '이것은 두 번째 게시글입니다.', createdAt: new Date() },
+      { author: 3, title: '세 번째 게시글', status: 'child', content: '이것은 세 번째 게시글입니다.', createdAt: new Date() },
     ]);
 
     console.log('Mock post data inserted');
 
     await Comment.bulkCreate([
-
-      { postID: 111, author: 1, status: 'child', content: '첫 번째 댓글', createdAt: new Date() },
-      { postID: 222, author: 2, status: 'parent', content: '두 번째 댓글', createdAt: new Date() },
-      { postID: 333, author: 3, status: 'child', content: '세 번째 댓글', createdAt: new Date() },
-    ])
+      { postID: 1, author: 1, status: 'child', content: '첫 번째 댓글', createdAt: new Date() },
+      { postID: 2, author: 2, status: 'parent', content: '두 번째 댓글', createdAt: new Date() },
+      { postID: 3, author: 3, status: 'child', content: '세 번째 댓글', createdAt: new Date() },
+    ]);
 
     console.log('Mock comment data inserted');
 
     await Question.bulkCreate([
-      { author: 111, title: '첫 번째 질문글', status:'child', content: '이것은 첫 번째 게시글입니다.', createdAt: new Date() },
-      { author: 222, title: '두 번째 질문글', status:'parent', content: '이것은 두 번째 게시글입니다.', createdAt: new Date() },
-      { author: 333, title: '세 번째 질문글', status:'parent', content: '이것은 세 번째 게시글입니다.', createdAt: new Date() },
+      { author: 1, title: '첫 번째 질문글', status:'child', content: '이것은 첫 번째 게시글입니다.', createdAt: new Date() },
+      { author: 2, title: '두 번째 질문글', status:'parent', content: '이것은 두 번째 게시글입니다.', createdAt: new Date() },
+      { author: 3, title: '세 번째 질문글', status:'parent', content: '이것은 세 번째 게시글입니다.', createdAt: new Date() },
     ]);
 
     console.log('Mock question data inserted');
 
     await Answer.bulkCreate([
-      { questionID: 111, author: 1, status: 'child', content: '첫 번째 댓글', createdAt: new Date() },
-      { questionID: 222, author: 2, status: 'parent', content: '두 번째 댓글', createdAt: new Date() },
-      { questionID: 333, author: 3, status: 'expert', content: '세 번째 댓글', createdAt: new Date() },
-    ])
+      { questionID: 1, author: 1, status: 'child', content: '첫 번째 댓글', createdAt: new Date() },
+      { questionID: 2, author: 2, status: 'parent', content: '두 번째 댓글', createdAt: new Date() },
+      { questionID: 3, author: 3, status: 'expert', content: '세 번째 댓글', createdAt: new Date() },
+    ]);
 
     console.log('Mock answer data inserted');
+
+    await SurveyQuestion.bulkCreate([
+      { surveyId: 1, text: '지난 한 달 동안 얼마나 자주 스트레스를 느끼셨나요?' },
+      { surveyId: 1, text: '지난 한 달 동안 얼마나 자주 불안감을 느끼셨나요?' },
+      { surveyId: 2, text: '당신의 적성에 대해 얼마나 만족하십니까?' },
+      { surveyId: 3, text: '지난 한 달 동안 얼마나 자주 우울감을 느끼셨나요?' },
+      { surveyId: 4, text: '당신이 화를 낼 때 주로 어떤 방식으로 표출하나요?' },
+      { surveyId: 5, text: '사회적 상황에서 얼마나 자주 불안을 느끼십니까?' },
+    ]);
+
+    console.log('Mock survey question data inserted');
+
+    await SurveyAnswer.bulkCreate([
+      { surveyId: 1, questionId: 1, answer: '전혀 그렇지 않다' },
+      { surveyId: 1, questionId: 2, answer: '그렇지 않다' },
+      { surveyId: 2, questionId: 3, answer: '보통이다' },
+      { surveyId: 3, questionId: 4, answer: '그렇다' },
+      { surveyId: 4, questionId: 5, answer: '매우 그렇다' },
+    ]);
+
+    console.log('Mock survey answer data inserted');
 
   } catch (error) {
     console.error('Unable to connect to the database:', error);
@@ -123,19 +140,16 @@ initializeApp();
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-// View 엔진 설정
 app.set('views', path.join(__dirname, 'src', 'views'));
 
-// 라우터 설정
 app.use("/", router);
 app.use("/", postRouter);
 app.use("/", commentRouter);
 app.use("/", questionRouter);
 app.use("/", answerRouter);
 app.use('/', surveyRouter);
-app.use("/", chatRouter); // 추가
+app.use("/", chatRouter);
 
-// 추가 라우트 설정
 app.get('/test', async (req, res) => {
   try {
     const data = await getTest();
@@ -153,5 +167,4 @@ const server = app.listen(port, () => {
   console.log(`Server running on :${port}`);
 });
 
-// WebSocket 서버 설정
 setupWebSocket(server);
