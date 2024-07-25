@@ -22,9 +22,12 @@ const surveyRouter = require('./routes/surveyRouter');
 const SurveyQuestion = require('./models/surveyQuestions');
 const SurveyAnswer = require('./models/surveyAnswer');
 const chatRouter = require('./routes/chatRouter');
+const mentoringRouter = require('./routes/mentoringRouter.js');
 
 const Expert = require('./models/Expert');
-const ChatRoom = require('./models/chat/ChatRoom'); 
+const ChatRoom = require('./models/chat/ChatRoom');
+const MentoringRoom = require('./models/chat/MentoringRoom.js');
+const MentoringMessage = require('./models/chat/MentoringMessage.js');
 const Message = require('./models/chat/Message'); 
 const setupWebSocket = require('./wsServer'); 
 
@@ -65,9 +68,9 @@ const initializeApp = async () => {
     console.log('Database synchronized');
 
     await User.bulkCreate([
-      { name: 'Alice3', phone: '010-1111-1111', email: '123@gmail.com', password: await bcrypt.hash('123', 10), status: "child" },
-      { name: 'Bob3', phone: '010-2222-2222', email: '456@gmail.com', password: await bcrypt.hash('456', 10), status: "parent" },
-      { name: 'Charlie3', phone: '010-3333-3333', email: '789@gmail.com', password: await bcrypt.hash('789', 10), status: "child" },
+      { name: 'Alice3', phone: '010-1111-1111', email: '123@gmail.com', password: await bcrypt.hash('123', 10), status: "child", age:15 },
+      { name: 'Bob3', phone: '010-2222-2222', email: '456@gmail.com', password: await bcrypt.hash('456', 10), status: "parent", age:16 },
+      { name: 'Charlie3', phone: '010-3333-3333', email: '789@gmail.com', password: await bcrypt.hash('789', 10), status: "child", age:17 },
     ]);
 
     console.log('User mock data inserted');
@@ -165,6 +168,7 @@ app.use("/", questionRouter);
 app.use("/", answerRouter);
 app.use('/', surveyRouter);
 app.use("/", chatRouter);
+app.use("/", mentoringRouter);
 
 app.get('/test', async (req, res) => {
   try {
