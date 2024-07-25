@@ -4,7 +4,10 @@ const { authenticateJWT } = require('../middleware/authMiddleware');
 const postController = require('../controllers/postController');
 
 // 모든 게시글 조회
-router.get('/posts', postController.getAllPosts);
+router.get('/posts', authenticateJWT, postController.getAllPosts);
+
+router.get('/posts/titles', authenticateJWT, postController.getAllPostTitles);
+router.get('/posts/contents', authenticateJWT, postController.getAllPostContents);
 
 // 특정 게시글 조회
 router.get('/posts/:postID', postController.getPostById);
