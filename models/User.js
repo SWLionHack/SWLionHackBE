@@ -24,9 +24,9 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false
   },
-  age: {
-    type: DataTypes.INTEGER,
-    allowNull:false
+  birthdate: {
+    type: DataTypes.DATE,
+    allowNull: false
   }
 }, {
   tableName: 'user',

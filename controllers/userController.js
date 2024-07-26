@@ -43,14 +43,15 @@ const login = async (req, res) => {
   }
 };
 
+
 // 회원가입 처리
 const signUp = async (req, res) => {
   console.log(req.body); // 요청 본문 출력
 
-  const { name, phone, status, email, password, confirmPassword } = req.body;
+  const { name, phone, status, birthdate, email, password, confirmPassword } = req.body;
 
   // 필수 정보가 모두 있는지 확인
-  if (!name || !phone || !email || !password || !confirmPassword ||!status) {
+  if (!name || !phone || !email || !password || !confirmPassword || !status || !birthdate) {
     return res.status(400).send('정보를 모두 입력하세요');
   }
 
@@ -74,7 +75,7 @@ const signUp = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // 사용자 생성
-    const newUser = await User.create({ name, phone, email, password: hashedPassword, status });
+    const newUser = await User.create({ name, phone, email, password: hashedPassword, status, birthdate });
     console.log('New user created:', newUser);
     return res.status(201).send('회원가입이 완료되었습니다.');
   } catch (err) {
@@ -82,6 +83,7 @@ const signUp = async (req, res) => {
     return res.status(500).send('Internal server error');
   }
 };
+
 const logOut = (req, res) => {
   res.clearCookie('token');
   return res.status(200).json({ message: '로그아웃이 완료되었습니다.' });
