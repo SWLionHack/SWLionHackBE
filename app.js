@@ -40,8 +40,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// 매일 오후 11시 45분에 게시판 초기화
-schedule.scheduleJob('44 14 * * *', async () => {
+// 매일 오후 0시에 게시판 초기화
+schedule.scheduleJob('0 0 * * *', async () => {
   try {
     await DailyQuestionBoard.destroy({ where: {} });
     console.log('DailyQuestionBoard has been reset');
@@ -50,8 +50,8 @@ schedule.scheduleJob('44 14 * * *', async () => {
   }
 });
 
-// 매일 오전 8시 15분에 새로운 질문 설정
-schedule.scheduleJob('41 14 * * *', async () => {
+// 매일 오전 8시에 새로운 질문 
+schedule.scheduleJob('0 8 * * *', async () => {
   const t = await sequelize.transaction();
   try {
     const questions = await EverydayQuestion.findAll({
