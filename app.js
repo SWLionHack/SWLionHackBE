@@ -29,7 +29,20 @@ const ChatRoom = require('./models/chat/ChatRoom');
 const MentoringRoom = require('./models/chat/MentoringRoom.js');
 const MentoringMessage = require('./models/chat/MentoringMessage.js');
 const Message = require('./models/chat/Message'); 
-const setupWebSocket = require('./wsServer'); 
+
+
+/** open chat **/
+const openChatRouter = require('./routes/openChatRouter');
+const OpenChatRoom = require('./models/chat/OpenChatRoom')
+const OpenChatMessage = require('./models/chat/OpenChatMessage');
+
+// Define associations
+OpenChatRoom.hasMany(OpenChatMessage, { as: 'messages', foreignKey: 'openChatRoomId' });
+OpenChatMessage.belongsTo(OpenChatRoom, { foreignKey: 'openChatRoomId' });
+
+const setupSocket = require('./socket'); 
+
+
 
 const app = express();
 
@@ -68,9 +81,9 @@ const initializeApp = async () => {
     console.log('Database synchronized');
 
     await User.bulkCreate([
-      { name: 'Alice3', phone: '010-1111-1111', email: '123@gmail.com', password: await bcrypt.hash('123', 10), status: "child", age:15 },
-      { name: 'Bob3', phone: '010-2222-2222', email: '456@gmail.com', password: await bcrypt.hash('456', 10), status: "parent", age:16 },
-      { name: 'Charlie3', phone: '010-3333-3333', email: '789@gmail.com', password: await bcrypt.hash('789', 10), status: "child", age:17 },
+      { name: 'Alice3', phone: '010-1111-1111', email: '123@gmail.com', password: await bcrypt.hash('123', 10), status: "child", birthdate: new Date('2009-01-01') },
+      { name: 'Bob3', phone: '010-2222-2222', email: '456@gmail.com', password: await bcrypt.hash('456', 10), status: "parent", birthdate: new Date('2009-01-01') },
+      { name: 'Charlie3', phone: '010-3333-3333', email: '789@gmail.com', password: await bcrypt.hash('789', 10), status: "child", birthdate: new Date('2009-01-01') },
     ]);
 
     console.log('User mock data inserted');
@@ -150,6 +163,16 @@ const initializeApp = async () => {
 
     console.log('Mock survey answer data inserted');
 
+    await OpenChatRoom.bulkCreate([
+      { name: 'General Chat' },
+      { name: 'Tech Talk' },
+      { name: 'Gaming' },
+      { name: 'Movies & TV' },
+      { name: 'Random' }
+  ]);
+
+    console.log('Mock open chat rooms data inserted');
+
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }
@@ -170,21 +193,11 @@ app.use('/', surveyRouter);
 app.use("/", chatRouter);
 app.use("/", mentoringRouter);
 
-app.get('/test', async (req, res) => {
-  try {
-    const data = await getTest();
-    res.json({ message: 'Hello, Express!, end point /test', data });
-  } catch (err) {
-    res.status(500).json({ message: 'Database Error', error: err.message });
-  }
-});
-
-app.get('/api', (req, res) => {
-  res.json({ message: 'Hello, Express!, end point /api' });
-});
+app.use('/api', openChatRouter);
 
 const server = app.listen(port, () => {
   console.log(`Server running on :${port}`);
 });
 
-setupWebSocket(server);
+
+const io = setupSocket(server, corsOrigins);
