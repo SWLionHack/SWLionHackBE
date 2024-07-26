@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../sequelize'); // sequelize 설정 파일 경로
+const sequelize = require('../sequelize');
 
 const User = sequelize.define('User', {
   name: {

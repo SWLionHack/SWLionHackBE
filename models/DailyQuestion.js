@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../sequelize'); // sequelize 설정 파일 경로
+const sequelize = require('../sequelize');
 
-const Diary = sequelize.define('Diary', {
+const DailyQuestion = sequelize.define('DailyQuestion', {
   title: {
     type: DataTypes.STRING,
     allowNull: false
@@ -12,7 +12,8 @@ const Diary = sequelize.define('Diary', {
   },
   date: {
     type: DataTypes.DATE,
-    allowNull: false
+    allowNull: false,
+    defaultValue: DataTypes.NOW
   },
   userId: {
     type: DataTypes.INTEGER,
@@ -23,8 +24,8 @@ const Diary = sequelize.define('Diary', {
     allowNull: false
   }
 }, {
-  tableName: 'diaries',
+  tableName: 'daily_questions',
   timestamps: false
 });
 
-module.exports = Diary;
+module.exports = DailyQuestion;
