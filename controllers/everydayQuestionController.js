@@ -4,7 +4,11 @@ const createEverydayQuestion = async (req, res) => {
   const { question } = req.body;
 
   try {
-    const newEverydayQuestion = await EverydayQuestion.create({ question });
+    // 현재 가장 높은 order 값을 찾음
+    const maxOrder = await EverydayQuestion.max('order') || 0;
+
+    // 새로운 질문 생성 시 order 값을 현재 가장 높은 order 값 + 1로 설정
+    const newEverydayQuestion = await EverydayQuestion.create({ question, order: maxOrder + 1 });
     res.status(201).json(newEverydayQuestion);
   } catch (err) {
     console.error(err);
