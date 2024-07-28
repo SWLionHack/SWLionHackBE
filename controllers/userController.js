@@ -7,12 +7,12 @@ const User = require('../models/User');
 const JWT_SECRET = process.env.JWT_SECRET || 'JWT_TOKEN';
 
 // 로그인 페이지 제공
-const getLoginPage = (req, res) => {
+const loginPage = (req, res) => {
   res.sendFile(path.join(__dirname, '../template/login.html'));
 };
 
 // 회원가입 페이지 제공
-const getSignUpPage = (req, res) => {
+const signUpPage = (req, res) => {
   res.sendFile(path.join(__dirname, '../template/sign-up.html'));
 };
 
@@ -31,7 +31,7 @@ const login = async (req, res) => {
       return res.status(400).send('이메일 또는 비밀번호가 잘못되었습니다.');
     }
 
-    const token = jwt.sign({ id: user.id, email: user.email, status: user.status }, JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user.id, email: user.email, name: user.name, status: user.status }, JWT_SECRET, { expiresIn: '1h' });
 
     // JWT 토큰을 쿠키에 저장
     res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
@@ -42,7 +42,6 @@ const login = async (req, res) => {
     return res.status(500).send('Internal server error');
   }
 };
-
 
 // 회원가입 처리
 const signUp = async (req, res) => {
@@ -84,7 +83,7 @@ const signUp = async (req, res) => {
   }
 };
 
-const logOut = (req, res) => {
+const logout = (req, res) => {
   res.clearCookie('token');
   return res.status(200).json({ message: '로그아웃이 완료되었습니다.' });
 };
@@ -94,11 +93,29 @@ const protectedRoute = (req, res) => {
   res.status(200).send('This is a protected route');
 };
 
+// 사용자 정보 제공
+const userInfo = async (req, res) => {
+  try {
+    const userId = req.user.id; // 인증 미들웨어를 통해 설정된 사용자 ID
+    const user = await User.findByPk(userId, { attributes: ['name', 'phone', 'email', 'password'] });
+
+    if (!user) {
+      return res.status(404).send('사용자를 찾을 수 없습니다.');
+    }
+
+    res.status(200).json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal server error');
+  }
+};
+
 module.exports = {
-  getLoginPage,
-  getSignUpPage,
+  loginPage,
+  signUpPage,
   login,
   signUp,
-  logOut,
-  protectedRoute
+  logout,
+  protectedRoute,
+  userInfo
 };

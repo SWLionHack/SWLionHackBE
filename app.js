@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
-const router = require('./routes/router');
+const userRouter = require('./routes/userRouter');
 const postRouter = require('./routes/postRouter');
 const questionRouter = require('./routes/questionRouter.js');
 const commentRouter = require('./routes/commentRouter');
@@ -42,7 +42,15 @@ OpenChatMessage.belongsTo(OpenChatRoom, { foreignKey: 'openChatRoomId' });
 
 const setupSocket = require('./socket'); 
 
-
+const dailyQuestionRouter = require('./routes/dailyQuestionRouter');
+const everydayQuestionRouter = require('./routes/everydayQuestionRouter');
+const dailyQuestionBoardRouter = require('./routes/dailyQuestionBoardRouter');
+const postModel = require('./models/postModel.js');
+const DailyQuestion = require('./models/DailyQuestion');
+const EverydayQuestion = require('./models/EverydayQuestion');
+const DailyQuestionBoard = require('./models/DailyQuestionBoard');
+const { getTest } = require('./test/testRepository.js');
+const schedule = require('node-schedule');
 
 const app = express();
 
@@ -71,6 +79,59 @@ User.hasMany(ChatRoom, { foreignKey: 'userId' });
 Expert.hasMany(ChatRoom, { foreignKey: 'expertId' });
 ChatRoom.belongsTo(User, { foreignKey: 'userId' });
 ChatRoom.belongsTo(Expert, { foreignKey: 'expertId' });
+
+// 매일 오후 0시에 게시판 초기화
+schedule.scheduleJob('0 0 * * *', async () => {
+  try {
+    await DailyQuestionBoard.destroy({ where: {} });
+    console.log('DailyQuestionBoard has been reset');
+  } catch (err) {
+    console.error('Failed to reset DailyQuestionBoard:', err);
+  }
+});
+
+// 매일 오전 8시에 새로운 질문 
+schedule.scheduleJob('0 8 * * *', async () => {
+  const t = await sequelize.transaction();
+  try {
+    const questions = await EverydayQuestion.findAll({
+      order: [['order', 'ASC']],
+      transaction: t
+    });
+
+    if (questions.length > 0) {
+      const firstQuestion = questions[0];
+      const nextOrder = firstQuestion.order === questions.length ? 1 : firstQuestion.order + 1;
+      const nextQuestion = questions.find(q => q.order === nextOrder);
+
+      // Update the order of the first question to the highest order
+      await EverydayQuestion.update(
+        { order: questions.length + 1 },
+        { where: { id: firstQuestion.id }, transaction: t }
+      );
+
+      // Update the order of the remaining questions
+      for (let i = 1; i < questions.length; i++) {
+        await EverydayQuestion.update(
+          { order: i },
+          { where: { id: questions[i].id }, transaction: t }
+        );
+      }
+
+      // Update the first question's order to the highest value in sequence
+      await EverydayQuestion.update(
+        { order: questions.length },
+        { where: { id: firstQuestion.id }, transaction: t }
+      );
+
+      await t.commit();
+      console.log('New everyday question set:', nextQuestion.question);
+    }
+  } catch (err) {
+    await t.rollback();
+    console.error('Failed to set everyday question:', err);
+  }
+});
 
 const initializeApp = async () => {
   try {
@@ -184,7 +245,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.set('views', path.join(__dirname, 'src', 'views'));
 
-app.use("/", router);
+app.use("/", userRouter);
 app.use("/", postRouter);
 app.use("/", commentRouter);
 app.use("/", questionRouter);
@@ -192,6 +253,9 @@ app.use("/", answerRouter);
 app.use('/', surveyRouter);
 app.use("/", chatRouter);
 app.use("/", mentoringRouter);
+app.use("/", dailyQuestionRouter);
+app.use("/", everydayQuestionRouter);
+app.use("/", dailyQuestionBoardRouter);
 
 app.use('/api', openChatRouter);
 
