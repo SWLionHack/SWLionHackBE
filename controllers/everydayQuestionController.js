@@ -1,5 +1,6 @@
-const EverydayQuestion = require('../models/EverydayQuestion');
+const EverydayQuestion = require('../models/daily_question/EverydayQuestion');
 
+// 새로운 질문 생성
 const createEverydayQuestion = async (req, res) => {
   const { question } = req.body;
 
@@ -16,6 +17,7 @@ const createEverydayQuestion = async (req, res) => {
   }
 };
 
+// 현재 질문 조회
 const getEverydayQuestion = async (req, res) => {
   try {
     const everydayQuestion = await EverydayQuestion.findOne({

@@ -47,7 +47,9 @@ const login = async (req, res) => {
 const signUp = async (req, res) => {
   console.log(req.body); // 요청 본문 출력
 
-  const { name, phone, status, birthdate, email, password, confirmPassword } = req.body;
+  const { name, phone, birthdate, email, password, confirmPassword } = req.body;
+
+  const status = "teen"
 
   // 필수 정보가 모두 있는지 확인
   if (!name || !phone || !email || !password || !confirmPassword || !status || !birthdate) {

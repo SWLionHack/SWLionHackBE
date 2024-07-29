@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'JWT_TOKEN';
 
 const authenticateJWT = (req, res, next) => {
-  const token = req.cookies.token; // 쿠키에서 토큰 추출
+  const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
 
   if (!token) {
     return res.status(401).send('Access Denied: No token provided');
@@ -19,7 +19,7 @@ const authenticateJWT = (req, res, next) => {
 };
 
 const checkNotAuthenticated = (req, res, next) => {
-  const token = req.cookies.token;
+  const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
 
   if (token) {
     try {
