@@ -4,28 +4,44 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const bcrypt = require('bcrypt');
+const sequelize = require('./sequelize');
+
+/** user **/
 const userRouter = require('./routes/userRouter');
-const postRouter = require('./routes/postRouter');
+
+const User = require('./models/User');
+
+/** community **/
 const questionRouter = require('./routes/questionRouter.js');
 const commentRouter = require('./routes/commentRouter');
+const postRouter = require('./routes/postRouter');
 const answerRouter = require('./routes/answerRouter.js');
-const sequelize = require('./sequelize');
-const User = require('./models/User');
-const chatRouter = require('./routes/chatRouter');
-const mentoringRouter = require('./routes/mentoringRouter.js');
-const Expert = require('./models/Expert');
-const ChatRoom = require('./models/chat/ChatRoom');
+
+/** open chat **/
 const openChatRouter = require('./routes/openChatRouter');
+const chatRouter = require('./routes/chatRouter');
+
+const ChatRoom = require('./models/chat/ChatRoom');
 const OpenChatRoom = require('./models/chat/OpenChatRoom');
 const OpenChatMessage = require('./models/chat/OpenChatMessage');
+
+/** daily question **/
 const dailyQuestionRouter = require('./routes/dailyQuestionRouter');
 const everydayQuestionRouter = require('./routes/everydayQuestionRouter');
+
 const EverydayQuestion = require('./models/daily_question/EverydayQuestion');
 const DailyQuestion = require('./models/daily_question/DailyQuestion');
+
+/** map academy **/
+const academyRouter = require('./routes/academyRouter');
+
 const schedule = require('node-schedule');
 const { setupSocket } = require('./socket');
 const insertMockData = require('./mockData');
+
+
+const mentoringRouter = require('./routes/mentoringRouter.js');
+const Expert = require('./models/Expert');
 
 // Define associations
 OpenChatRoom.hasMany(OpenChatMessage, { as: 'messages', foreignKey: 'openChatRoomId' });
@@ -151,6 +167,8 @@ app.use("/", dailyQuestionRouter);
 app.use("/", everydayQuestionRouter);
 
 app.use('/api', openChatRouter);
+
+app.use('/map_academy', academyRouter);
 
 const server = app.listen(port, () => {
   console.log(`Server running on :${port}`);
