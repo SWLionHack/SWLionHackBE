@@ -16,7 +16,8 @@ const getAllPostTitles = async (req, res) => {
       attributes: ['postID', 'title', 'author'],
       where: { status }, // Filter by status
       offset,
-      limit
+      limit,
+      order: [['createdAt', 'DESC']], // 나중에 생성된 투표가 먼저 출력되도록 설정
     });
 
     const posts = rows.map(post => ({

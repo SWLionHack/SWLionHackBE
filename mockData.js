@@ -1,13 +1,12 @@
 const bcrypt = require('bcrypt');
 const User = require('./models/User');
-const Expert = require('./models/Expert');
 const Post = require('./models/postModel');
 const Comment = require('./models/commentModel');
-const Question = require('./models/questionModel');
-const Answer = require('./models/answerModel');
 const OpenChatRoom = require('./models/chat/OpenChatRoom');
 const EverydayQuestion = require('./models/daily_question/EverydayQuestion');
 const DailyQuestion = require('./models/daily_question/DailyQuestion');
+const QnA = require('./models/qna/QnAModel');
+const QnAVote = require('./models/qna/QnAVoteModel'); 
 
 const insertMockData = async () => {
   try {
@@ -25,14 +24,6 @@ const insertMockData = async () => {
       { name: 'Jack', phone: '010-0000-0000', email: 'jack@gmail.com', password: await bcrypt.hash('password10', 10), status: "teen", birthdate: new Date('2005-01-01') }
     ]);
     console.log('User mock data inserted');
-
-    // 전문가 데이터 삽입
-    await Expert.bulkCreate([
-      { name: 'Dr. John Doe', phone: '010-4444-4444', email: 'john.doe@example.com', password: await bcrypt.hash('password1', 10), specialization: "청소년 심리학" },
-      { name: 'Dr. Jane Smith', phone: '010-5555-5555', email: 'jane.smith@example.com', password: await bcrypt.hash('password2', 10), specialization: "정신건강" },
-      { name: 'Dr. Emily Johnson', phone: '010-6666-6666', email: 'emily.johnson@example.com', password: await bcrypt.hash('password3', 10), specialization: "청소년 상담" },
-    ]);
-    console.log('Expert mock data inserted');
 
     // 게시물 데이터 삽입
     const posts = await Post.bulkCreate([
@@ -84,22 +75,6 @@ const insertMockData = async () => {
     ];
     await Comment.bulkCreate(comments);
     console.log('Mock comment data inserted');
-
-    // 질문글 데이터 삽입
-    await Question.bulkCreate([
-      { author: 1, title: '게임을 하면서 느끼는 즐거움은 무엇인가요?', status: 'teen', content: '여러분은 게임을 하면서 어떤 점이 가장 재미있나요?', createdAt: new Date() },
-      { author: 2, title: '좋아하는 과목을 선택한 이유는?', status: 'teen', content: '여러분은 왜 그 과목을 좋아하게 되었나요?', createdAt: new Date() },
-      { author: 3, title: '친구들과의 추억을 어떻게 쌓나요?', status: 'teen', content: '여러분은 친구들과 어떤 활동을 하면서 추억을 쌓나요?', createdAt: new Date() },
-    ]);
-    console.log('Mock question data inserted');
-
-    // 답변 데이터 삽입
-    await Answer.bulkCreate([
-      { questionID: 1, author: 2, status: 'teen', content: '저는 친구들과 함께 게임할 때 가장 즐거워요.', createdAt: new Date() },
-      { questionID: 2, author: 3, status: 'teen', content: '선생님이 재미있게 가르쳐주셔서 그 과목을 좋아하게 되었어요.', createdAt: new Date() },
-      { questionID: 3, author: 1, status: 'teen', content: '같이 여행을 가거나 취미 활동을 하면서 추억을 쌓아요.', createdAt: new Date() },
-    ]);
-    console.log('Mock answer data inserted');
 
     // 오픈 채팅방 데이터 삽입
     await OpenChatRoom.bulkCreate([
@@ -185,6 +160,83 @@ const insertMockData = async () => {
 
     await DailyQuestion.bulkCreate(answers);
     console.log('Mock daily questions data inserted');
+
+   // QnA 데이터 삽입
+    const qnaData = [
+      { author: 1, title: '온라인 수업이 더 효율적이다. 찬성하시나요?', content: '온라인 수업의 장점에 대해 이야기해보세요.', expirationTime: new Date(new Date().getTime() + 1 * 60 * 60 * 1000), createdAt: new Date() },
+      { author: 2, title: '학교에서 매일 체육 수업이 있어야 한다고 생각하시나요?', content: '체육 수업이 매일 있을 때의 장단점은 무엇인가요?', expirationTime: new Date(new Date().getTime() + 2 * 60 * 60 * 1000), createdAt: new Date() },
+      { author: 3, title: '스마트폰 사용 시간을 제한해야 한다고 생각하시나요?', content: '스마트폰 사용 제한에 대한 의견을 남겨주세요.', expirationTime: new Date(new Date().getTime() + 3 * 60 * 60 * 1000), createdAt: new Date() },
+      { author: 4, title: '청소년들이 더 많은 자율성을 가져야 한다고 생각하시나요?', content: '청소년 자율성에 대한 의견을 공유해주세요.', expirationTime: new Date(new Date().getTime() + 4 * 60 * 60 * 1000), createdAt: new Date() },
+      { author: 5, title: '학교 급식의 질을 개선해야 한다고 생각하시나요?', content: '학교 급식의 질 개선에 대한 의견을 남겨주세요.', expirationTime: new Date(new Date().getTime() + 5 * 60 * 60 * 1000), createdAt: new Date() },
+      { author: 6, title: '학교에서 코딩 교육이 필수적으로 이루어져야 한다고 생각하시나요?', content: '코딩 교육의 중요성에 대해 이야기해보세요.', expirationTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), createdAt: new Date() },
+      { author: 7, title: '학교에서의 시험은 모두 오픈북으로 해야 한다고 생각하시나요?', content: '오픈북 시험에 대한 생각을 공유해주세요.', expirationTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), createdAt: new Date() },
+      { author: 8, title: '학생들이 직접 학교 규칙을 정할 수 있어야 한다고 생각하시나요?', content: '학교 규칙에 대한 학생 참여에 대한 의견을 남겨주세요.', expirationTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), createdAt: new Date() },
+      { author: 9, title: '교복이 아닌 사복을 입고 학교에 다녀야 한다고 생각하시나요?', content: '교복과 사복에 대한 생각을 나눠주세요.', expirationTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), createdAt: new Date() },
+      { author: 10, title: '학교에서 스마트폰 사용을 전면 금지해야 한다고 생각하시나요?', content: '스마트폰 사용 금지에 대한 의견을 남겨주세요.', expirationTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), createdAt: new Date() }
+    ];     
+
+    // QnA 데이터를 데이터베이스에 삽입
+    const qnaRecords = await QnA.bulkCreate(qnaData);
+
+    // QnA 데이터 삽입 후 생성된 ID 가져오기
+    const qnaIDs = qnaRecords.map(record => record.qnaID);
+
+    // QnAVote 데이터 생성
+    const qnaVotesData = [
+      { qnaID: qnaIDs[0], voterID: 2 },
+      { qnaID: qnaIDs[1], voterID: 3 },
+      { qnaID: qnaIDs[1], voterID: 4 },
+      { qnaID: qnaIDs[2], voterID: 4 },
+      { qnaID: qnaIDs[2], voterID: 5 },
+      { qnaID: qnaIDs[2], voterID: 6 },
+      { qnaID: qnaIDs[3], voterID: 5 },
+      { qnaID: qnaIDs[3], voterID: 6 },
+      { qnaID: qnaIDs[3], voterID: 7 },
+      { qnaID: qnaIDs[3], voterID: 8 },
+      { qnaID: qnaIDs[4], voterID: 6 },
+      { qnaID: qnaIDs[4], voterID: 7 },
+      { qnaID: qnaIDs[4], voterID: 8 },
+      { qnaID: qnaIDs[4], voterID: 9 },
+      { qnaID: qnaIDs[4], voterID: 10 },
+      { qnaID: qnaIDs[5], voterID: 7 },
+      { qnaID: qnaIDs[5], voterID: 8 },
+      { qnaID: qnaIDs[5], voterID: 9 },
+      { qnaID: qnaIDs[5], voterID: 10 },
+      { qnaID: qnaIDs[5], voterID: 1 },
+      { qnaID: qnaIDs[6], voterID: 8 },
+      { qnaID: qnaIDs[6], voterID: 9 },
+      { qnaID: qnaIDs[6], voterID: 10 },
+      { qnaID: qnaIDs[6], voterID: 1 },
+      { qnaID: qnaIDs[6], voterID: 2 },
+      { qnaID: qnaIDs[6], voterID: 3 },
+      { qnaID: qnaIDs[7], voterID: 9 },
+      { qnaID: qnaIDs[7], voterID: 10 },
+      { qnaID: qnaIDs[7], voterID: 1 },
+      { qnaID: qnaIDs[7], voterID: 2 },
+      { qnaID: qnaIDs[7], voterID: 3 },
+      { qnaID: qnaIDs[7], voterID: 4 },
+      { qnaID: qnaIDs[8], voterID: 10 },
+      { qnaID: qnaIDs[8], voterID: 1 },
+      { qnaID: qnaIDs[8], voterID: 2 },
+      { qnaID: qnaIDs[8], voterID: 3 },
+      { qnaID: qnaIDs[8], voterID: 4 },
+      { qnaID: qnaIDs[8], voterID: 5 },
+      { qnaID: qnaIDs[8], voterID: 6 },
+      { qnaID: qnaIDs[9], voterID: 1 },
+      { qnaID: qnaIDs[9], voterID: 2 },
+      { qnaID: qnaIDs[9], voterID: 3 },
+      { qnaID: qnaIDs[9], voterID: 4 },
+      { qnaID: qnaIDs[9], voterID: 5 },
+      { qnaID: qnaIDs[9], voterID: 6 },
+      { qnaID: qnaIDs[9], voterID: 7 },
+      { qnaID: qnaIDs[9], voterID: 8 },
+      { qnaID: qnaIDs[9], voterID: 9 }
+    ];
+
+    // QnAVote 데이터 삽입
+    await QnAVote.bulkCreate(qnaVotesData);
+    console.log('Mock QnA and QnAVote data inserted');
+
   } catch (error) {
     console.error('Unable to insert mock data:', error);
   }

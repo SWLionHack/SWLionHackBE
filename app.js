@@ -19,9 +19,7 @@ const answerRouter = require('./routes/answerRouter.js');
 
 /** open chat **/
 const openChatRouter = require('./routes/openChatRouter');
-const chatRouter = require('./routes/chatRouter');
 
-const ChatRoom = require('./models/chat/ChatRoom');
 const OpenChatRoom = require('./models/chat/OpenChatRoom');
 const OpenChatMessage = require('./models/chat/OpenChatMessage');
 
@@ -35,22 +33,19 @@ const DailyQuestion = require('./models/daily_question/DailyQuestion');
 /** map academy **/
 const academyRouter = require('./routes/academyRouter');
 
+/** qna **/
+const QnARouter = require('./routes/QnARouter');
+
 const schedule = require('node-schedule');
 const { setupSocket } = require('./socket');
 const insertMockData = require('./mockData');
 
 
 const mentoringRouter = require('./routes/mentoringRouter.js');
-const Expert = require('./models/Expert');
 
 // Define associations
 OpenChatRoom.hasMany(OpenChatMessage, { as: 'messages', foreignKey: 'openChatRoomId' });
 OpenChatMessage.belongsTo(OpenChatRoom, { foreignKey: 'openChatRoomId' });
-
-User.hasMany(ChatRoom, { foreignKey: 'userId' });
-Expert.hasMany(ChatRoom, { foreignKey: 'expertId' });
-ChatRoom.belongsTo(User, { foreignKey: 'userId' });
-ChatRoom.belongsTo(Expert, { foreignKey: 'expertId' });
 
 const app = express(); // 앱 변수 정의
 
@@ -160,7 +155,6 @@ app.use("/", postRouter);
 app.use("/", commentRouter);
 app.use("/", questionRouter);
 app.use("/", answerRouter);
-app.use("/", chatRouter);
 app.use("/", mentoringRouter);
 
 app.use("/", dailyQuestionRouter);
@@ -169,6 +163,7 @@ app.use("/", everydayQuestionRouter);
 app.use('/api', openChatRouter);
 
 app.use('/map_academy', academyRouter);
+app.use('/qna', QnARouter);
 
 const server = app.listen(port, () => {
   console.log(`Server running on :${port}`);
