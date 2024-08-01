@@ -121,7 +121,7 @@ const insertMockData = async () => {
       { content: '가장 큰 성취는 대학 입학입니다.', userId: 10, userName: 'Jack', questionIndex: 9 },
       { content: '저는 해리포터 시리즈를 정말 좋아해요.', userId: 1, userName: 'Alice3', questionIndex: 0 },
       { content: '가족과 함께하는 하루가 완벽한 하루라고 생각해요.', userId: 2, userName: 'Bob3', questionIndex: 1 },
-      { content: '저는 과학자가 되어서 인류에게 도움이 되고 싶어요.',      userId: 3, userName: 'Charlie3', questionIndex: 2 },
+      { content: '저는 과학자가 되어서 인류에게 도움이 되고 싶어요.', userId: 3, userName: 'Charlie3', questionIndex: 2 },
       { content: '오늘은 친구와 함께 시간을 보내서 감사해요.', userId: 4, userName: 'David', questionIndex: 3 },
       { content: '저는 성공을 위해 끊임없이 노력하는 것이 동기부여가 됩니다.', userId: 5, userName: 'Emma', questionIndex: 4 },
       { content: '저는 그림 그리기가 가장 좋아하는 취미입니다.', userId: 6, userName: 'Frank', questionIndex: 5 },
@@ -135,8 +135,8 @@ const insertMockData = async () => {
     const answers = [];
 
     for (let i = 0; i < 10; i++) {
-      const date = new Date();
-      date.setDate(startDate.getDate() + i);
+      const date = new Date(today); // today 기준으로 날짜 설정
+      date.setDate(today.getDate() + i); // 각 질문의 날짜를 설정
 
       questions.push({
         question: everydayQuestions[i].question,
@@ -151,9 +151,10 @@ const insertMockData = async () => {
         userId: dailyQuestions[i].userId,
         userName: dailyQuestions[i].userName,
         questionId: i + 1,
-        isShared: Math.random() > 0.5, // 50% chance of being shared
+        isShared: Math.random() > 0.5, // 50% 확률로 공유됨
       });
     }
+
 
     await EverydayQuestion.bulkCreate(questions);
     console.log('Mock everyday questions data inserted');

@@ -1,8 +1,7 @@
-// routes/QnARouter.js
 const express = require('express');
 const router = express.Router();
 const { authenticateJWT } = require('../middleware/authMiddleware');
-const qnaController = require('../controllers/qnaController');
+const qnaController = require('../controllers/QnAController');
 
 // QnA 생성 API
 router.post('/create', authenticateJWT, qnaController.createQnA);
