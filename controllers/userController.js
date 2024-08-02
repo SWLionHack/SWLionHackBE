@@ -31,7 +31,7 @@ const login = async (req, res) => {
       return res.status(400).send('이메일 또는 비밀번호가 잘못되었습니다.');
     }
 
-    const token = jwt.sign({ id: user.id, email: user.email, name: user.name, status: user.status }, JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user.id, email: user.email, name: user.name, status: user.status }, JWT_SECRET, { expiresIn: '24h' });
 
     // JWT 토큰을 쿠키에 저장
     res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });

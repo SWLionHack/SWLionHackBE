@@ -162,19 +162,19 @@ const insertMockData = async () => {
     await DailyQuestion.bulkCreate(answers);
     console.log('Mock daily questions data inserted');
 
-   // QnA 데이터 삽입
+    // QnA 데이터 삽입
     const qnaData = [
-      { author: 1, title: '온라인 수업이 더 효율적이다. 찬성하시나요?', content: '온라인 수업의 장점에 대해 이야기해보세요.', expirationTime: new Date(new Date().getTime() + 1 * 60 * 60 * 1000), createdAt: new Date() },
-      { author: 2, title: '학교에서 매일 체육 수업이 있어야 한다고 생각하시나요?', content: '체육 수업이 매일 있을 때의 장단점은 무엇인가요?', expirationTime: new Date(new Date().getTime() + 2 * 60 * 60 * 1000), createdAt: new Date() },
-      { author: 3, title: '스마트폰 사용 시간을 제한해야 한다고 생각하시나요?', content: '스마트폰 사용 제한에 대한 의견을 남겨주세요.', expirationTime: new Date(new Date().getTime() + 3 * 60 * 60 * 1000), createdAt: new Date() },
-      { author: 4, title: '청소년들이 더 많은 자율성을 가져야 한다고 생각하시나요?', content: '청소년 자율성에 대한 의견을 공유해주세요.', expirationTime: new Date(new Date().getTime() + 4 * 60 * 60 * 1000), createdAt: new Date() },
-      { author: 5, title: '학교 급식의 질을 개선해야 한다고 생각하시나요?', content: '학교 급식의 질 개선에 대한 의견을 남겨주세요.', expirationTime: new Date(new Date().getTime() + 5 * 60 * 60 * 1000), createdAt: new Date() },
-      { author: 6, title: '학교에서 코딩 교육이 필수적으로 이루어져야 한다고 생각하시나요?', content: '코딩 교육의 중요성에 대해 이야기해보세요.', expirationTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), createdAt: new Date() },
-      { author: 7, title: '학교에서의 시험은 모두 오픈북으로 해야 한다고 생각하시나요?', content: '오픈북 시험에 대한 생각을 공유해주세요.', expirationTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), createdAt: new Date() },
-      { author: 8, title: '학생들이 직접 학교 규칙을 정할 수 있어야 한다고 생각하시나요?', content: '학교 규칙에 대한 학생 참여에 대한 의견을 남겨주세요.', expirationTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), createdAt: new Date() },
-      { author: 9, title: '교복이 아닌 사복을 입고 학교에 다녀야 한다고 생각하시나요?', content: '교복과 사복에 대한 생각을 나눠주세요.', expirationTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), createdAt: new Date() },
-      { author: 10, title: '학교에서 스마트폰 사용을 전면 금지해야 한다고 생각하시나요?', content: '스마트폰 사용 금지에 대한 의견을 남겨주세요.', expirationTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), createdAt: new Date() }
-    ];     
+      { author: 1, title: '온라인 수업이 더 효율적입니다.', content: '온라인 수업은 시간과 장소에 구애받지 않고 효율적으로 학습할 수 있는 장점이 있습니다.', expirationTime: new Date(new Date().getTime() + 1 * 60 * 60 * 1000), createdAt: new Date() },
+      { author: 2, title: '매일 체육 수업이 필요합니다.', content: '매일 체육 수업은 학생들의 건강을 증진시키고 스트레스를 해소하는 데 도움이 됩니다.', expirationTime: new Date(new Date().getTime() + 2 * 60 * 60 * 1000), createdAt: new Date() },
+      { author: 3, title: '스마트폰 사용 시간을 제한해야 합니다.', content: '스마트폰 사용 시간 제한은 학생들의 집중력을 높이고 건강한 생활 습관을 유지하는 데 중요합니다.', expirationTime: new Date(new Date().getTime() + 3 * 60 * 60 * 1000), createdAt: new Date() },
+      { author: 4, title: '청소년들에게 더 많은 자율성을 줘야 합니다.', content: '청소년들이 자율성을 가질 때 자기 주도적인 학습과 성장이 가능합니다.', expirationTime: new Date(new Date().getTime() + 4 * 60 * 60 * 1000), createdAt: new Date() },
+      { author: 5, title: '학교 급식의 질을 개선해야 합니다.', content: '학교 급식의 질 개선은 학생들의 건강과 학습 효율을 높이는 데 중요합니다.', expirationTime: new Date(new Date().getTime() + 5 * 60 * 60 * 1000), createdAt: new Date() },
+      { author: 6, title: '학교에서 코딩 교육이 필수적입니다.', content: '코딩 교육은 미래 사회에서 중요한 역량을 키우는 데 필수적입니다.', expirationTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), createdAt: new Date() },
+      { author: 7, title: '학교 시험은 오픈북으로 해야 합니다.', content: '오픈북 시험은 학생들이 단순 암기보다 문제 해결 능력을 기르는 데 도움이 됩니다.', expirationTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), createdAt: new Date() },
+      { author: 8, title: '학생들이 학교 규칙을 직접 정해야 합니다.', content: '학생들이 직접 규칙을 정하면 책임감을 느끼고 더 잘 지킬 수 있습니다.', expirationTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), createdAt: new Date() },
+      { author: 9, title: '학교에서는 교복 대신 사복을 입어야 합니다.', content: '사복 착용은 학생들의 개성을 존중하고 편안한 학습 환경을 제공합니다.', expirationTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), createdAt: new Date() },
+      { author: 10, title: '학교에서 스마트폰 사용을 금지해야 합니다.', content: '스마트폰 사용 금지는 학생들이 수업에 더 집중할 수 있도록 돕습니다.', expirationTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), createdAt: new Date() }
+    ];   
 
     // QnA 데이터를 데이터베이스에 삽입
     const qnaRecords = await QnA.bulkCreate(qnaData);
@@ -238,10 +238,10 @@ const insertMockData = async () => {
     await QnAVote.bulkCreate(qnaVotesData);
     console.log('Mock QnA and QnAVote data inserted');
 
+
   } catch (error) {
     console.error('Unable to insert mock data:', error);
   }
 };
 
 module.exports = insertMockData;
-
