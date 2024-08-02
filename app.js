@@ -36,6 +36,10 @@ const academyRouter = require('./routes/academyRouter');
 /** qna **/
 const QnARouter = require('./routes/QnARouter');
 
+/** gpt api **/
+const gptChatRoutes = require('./routes/gpt_api/gptUserRoutes')
+const assistantRoutes = require('./routes/gpt_api/assistantRoutes')
+
 const schedule = require('node-schedule');
 const { setupSocket } = require('./socket');
 const insertMockData = require('./mockData');
@@ -164,6 +168,9 @@ app.use('/api', openChatRouter);
 
 app.use('/map_academy', academyRouter);
 app.use('/qna', QnARouter);
+
+app.use('/gpt', gptChatRoutes);
+app.use('/assistant', assistantRoutes);
 
 const server = app.listen(port, () => {
   console.log(`Server running on :${port}`);
