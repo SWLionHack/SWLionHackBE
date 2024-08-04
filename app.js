@@ -36,6 +36,9 @@ const academyRouter = require('./routes/academyRouter');
 /** meet **/
 const meetRouter = require('./routes/meetRouter');
 
+/** meeting chat */
+const meetingChatRouter = require('./routes/meetingChatRouter');
+
 /** gpt api **/
 const gptChatRoutes = require('./routes/gpt_api/gptUserRoutes')
 const assistantRoutes = require('./routes/gpt_api/assistantRoutes')
@@ -165,6 +168,8 @@ app.use("/", dailyQuestionRouter);
 app.use("/", everydayQuestionRouter);
 
 app.use('/api', openChatRouter);
+app.use('/chat', meetingChatRouter);
+
 
 app.use('/map_academy', academyRouter);
 app.use('/meet', meetRouter);

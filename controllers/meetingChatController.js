@@ -2,6 +2,8 @@ const MeetingChatRoom = require('../models/chat/MeetingChatRoom');
 const MeetingChatMessage = require('../models/chat/MeetingChatMessage');
 const Meet = require('../models/meet/MeetModel');
 const MeetVote = require('../models/meet/MeetVoteModel');
+const MeetingChatParticipant = require('../models/chat/MeetingChatParticipant'); 
+
 
 exports.createMeetingChatRoom = async (req, res) => {
   const { meetID } = req.params;
@@ -24,16 +26,24 @@ exports.createMeetingChatRoom = async (req, res) => {
       return res.status(400).json({ error: 'Not enough participants to create chat room' });
     }
 
-    // Meet 글 삭제
-    await meet.destroy();
-
     // 새로운 Meeting Chat Room 생성
     const chatRoomName = `${meet.title} Chat Room`;
     const meetingChatRoom = await MeetingChatRoom.create({ name: chatRoomName });
 
-    // 필요에 따라 환영 메시지나 초기 설정 추가 가능
+    // Meet 작성자와 투표한 사용자들을 MeetingChatParticipant에 추가
+    const participants = [meet.author, ...meet.votes.map(vote => vote.voterID)];
 
-    res.status(201).json({ message: 'Meeting chat room created', meetingChatRoom });
+    for (const userId of participants) {
+      await MeetingChatParticipant.create({
+        meetingChatRoomId: meetingChatRoom.id,
+        userId,
+      });
+    }
+
+    // Meet 글 삭제
+    await meet.destroy();
+
+    res.status(201).json({ message: 'Meeting chat room created and participants added', meetingChatRoom });
   } catch (error) {
     console.error('Error creating meeting chat room:', error);
     res.status(500).json({ error: 'Failed to create meeting chat room', details: error.message });
