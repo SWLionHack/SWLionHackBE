@@ -4,6 +4,7 @@ const { authenticateJWT } = require('../middleware/authMiddleware');
 const postController = require('../controllers/postController');
 
 // 게시글 제목 조회
+// /posts/titles?category=sales&&page=1
 router.get('/posts/titles', authenticateJWT, postController.getAllPostTitles);
 
 // 특정 게시글 조회
