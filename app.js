@@ -33,8 +33,8 @@ const DailyQuestion = require('./models/daily_question/DailyQuestion');
 /** map academy **/
 const academyRouter = require('./routes/academyRouter');
 
-/** qna **/
-const QnARouter = require('./routes/QnARouter');
+/** meet **/
+const meetRouter = require('./routes/meetRouter');
 
 /** gpt api **/
 const gptChatRoutes = require('./routes/gpt_api/gptUserRoutes')
@@ -54,7 +54,7 @@ OpenChatMessage.belongsTo(OpenChatRoom, { foreignKey: 'openChatRoomId' });
 const app = express(); // 앱 변수 정의
 
 const port = process.env.PORT || 8181;
-const corsOrigins = [process.env.CORS_ORIGIN || 'http://localhost', 'http://localhost:3000'];
+const corsOrigins = [process.env.CORS_ORIGIN || 'http://localhost', 'http://localhost:8181'];
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -167,7 +167,7 @@ app.use("/", everydayQuestionRouter);
 app.use('/api', openChatRouter);
 
 app.use('/map_academy', academyRouter);
-app.use('/qna', QnARouter);
+app.use('/meet', meetRouter);
 
 app.use('/gpt', gptChatRoutes);
 app.use('/assistant', assistantRoutes);
