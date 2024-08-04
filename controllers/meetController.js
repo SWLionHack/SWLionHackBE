@@ -14,57 +14,6 @@ exports.createMeet = async (req, res) => {
   }
 };
 
-// 아래 코드 임시 보류 
-
-// exports.voteMeet = async (req, res) => {
-//   try { 
-//     const { meetID } = req.params;
-//     const userID = req.user.id;
-
-//     // Meet을 찾아서 작성자가 본인인지 확인
-//     const mine = await Meet.findByPk(meetID);
-//     if (!mine) {
-//       return res.status(404).json({ error: 'Meet not found' });
-//     }
-//     // 작성자는 참가 투표 못함 
-//     if (mine.author === userID) {
-//       return res.status(403).json({ error: 'You cannot vote on your own meet' });
-//     }
-
-//     const existingVote = await MeetVote.findOne({ where: { meetID, voterID: userID } });
-
-//     if (existingVote) {
-//       await existingVote.destroy();
-//       return res.status(200).json({ message: 'Vote removed' });
-//     }
-
-
-
-//     // 현재 meetID에 해당하는 Meet을 데이터베이스에서 찾고, 포함된 투표 정보도 가져옴
-//     const meet = await Meet.findByPk(meetID, {
-//       include: [{ model: MeetVote, as: 'votes' }]
-//     });
-    
-//     if (!meet || new Date() > new Date(meet.expirationTime)) {
-//       return res.status(400).json({ error: 'Voting period has expired' });
-//     }
-
-//     // 현재 해당 모임에 투표된 인원 수 확인
-//     const currentVoteCount = await MeetVote.count({ where: { meetID } });
-
-//     // 현재 투표 수가 최대 인원 제한을 초과했는지 확인
-//     if (currentVoteCount >= meet.maxCapacity) {
-//       return res.status(400).json({ error: 'Maximum capacity reached' });
-//     }
-
-//     await MeetVote.create({ meetID, voterID: userID });
-//     res.status(200).json({ message: 'Vote added' });
-//   } catch (err) {
-//     console.error('Error voting on Meet:', err);
-//     res.status(500).json({ error: 'Failed to vote', details: err.message });
-//   }
-// };
-
 exports.voteMeet = async (req, res) => {
   try { 
     const { meetID } = req.params;
