@@ -11,7 +11,7 @@ const Post = sequelize.define('Post', {
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  status: { //게시판
+  category: { //게시판
     type: DataTypes.STRING,
     allowNull: false
   },

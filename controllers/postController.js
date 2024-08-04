@@ -2,22 +2,24 @@ const { Op } = require('sequelize');
 const Post = require('../models/postModel');
 const jwt = require('jsonwebtoken');
 
+// 모든 게시글 제목 조회
 const getAllPostTitles = async (req, res) => {
   const loginId = req.user.id;
-
   const page = parseInt(req.query.page) || 1;
   const size = parseInt(req.query.size) || 10;
-  const status = req.user.status; // Assume this contains either '부모' or '자녀'
+  const category = req.query.category || ''; // 게시판
   const offset = (page - 1) * size;
   const limit = size;
 
   try {
     const { count, rows } = await Post.findAndCountAll({
       attributes: ['postID', 'title', 'author'],
-      where: { status }, // Filter by status
+      where: {
+        category: { [Op.like]: `%${category}%` } // category로 필터링
+      },
       offset,
       limit,
-      order: [['createdAt', 'DESC']], // 나중에 생성된 투표가 먼저 출력되도록 설정
+      order: [['createdAt', 'DESC']], // 나중에 생성된 게시글이 먼저 출력되도록 설정
     });
 
     const posts = rows.map(post => ({
@@ -39,7 +41,6 @@ const getAllPostTitles = async (req, res) => {
 
 // 특정 게시글 조회
 const getPostById = async (req, res) => {
-  
   console.log('getPostById called'); // 함수 호출 여부 확인
   const { postID } = req.params;
   console.log('Post ID:', postID); // 요청된 postID 확인
@@ -58,9 +59,8 @@ const getPostById = async (req, res) => {
 
 // 게시글 작성
 const createPost = async (req, res) => {
-  //const { author, title, content } = req.body;
   const author = req.user.id;
-  const status = req.user.status;
+  const category = req.body.category; // 게시판 상태를 요청 바디에서 받음
   const { title, content } = req.body;
 
   if (!author || !title || !content) {
@@ -70,7 +70,7 @@ const createPost = async (req, res) => {
   try {
     const newPost = await Post.create({
       author,
-      status,
+      category,
       title,
       content,
       createdAt: new Date()
@@ -92,8 +92,8 @@ const deletePost = async (req, res) => {
     if (!post) {
       return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' });
     }
-    if(post.author !== authorId){
-        return res.status(403).json({message:'삭제 권한이 없습니다.'});
+    if (post.author !== authorId) {
+      return res.status(403).json({ message: '삭제 권한이 없습니다.' });
     }
 
     await post.destroy();
