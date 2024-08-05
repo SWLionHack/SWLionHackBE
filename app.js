@@ -37,6 +37,7 @@ const academyRouter = require('./routes/academyRouter');
 const meetRouter = require('./routes/meetRouter');
 
 /** meeting chat */
+const { setupMeetSocket } = require("./meetSocket");
 const meetingChatRouter = require('./routes/meetingChatRouter');
 
 /** gpt api **/
@@ -182,5 +183,6 @@ const server = app.listen(port, () => {
 });
 
 setupSocket(server, corsOrigins); // io 객체 초기화
+setupMeetSocket(server, corsOrigins);
 
 module.exports = app;

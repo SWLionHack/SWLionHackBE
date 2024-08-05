@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meeting Chat Room</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #f4f4f4;
+    }
+    #chat-container {
+      width: 80%;
+      max-width: 600px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    #messages {
+      height: 300px;
+      overflow-y: scroll;
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+    #message-form {
+      display: flex;
+    }
+    #message-input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+    #send-button {
+      padding: 10px 20px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #send-button:hover {
+      background: #218838;
+    }
+  </style>
+</head>
+<body>
+  <div id="chat-container">
+    <h2>Meeting Chat Room</h2>
+    <div id="messages"></div>
+    <form id="message-form">
+      <input type="text" id="message-input" placeholder="Type your message..." required />
+      <button type="submit" id="send-button">Send</button>
+    </form>
+  </div>
+
+  <!-- Include socket.io library -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+  
+    // Replace these with actual values
+    const meetingChatRoomId = '1'; // 테스트를 위한 기본값
+    const userId = '123'; // 테스트를 위한 기본값
+    const username = 'TestUser'; // 테스트를 위한 기본값
+  
+    // 채팅방에 입장할 때 이전 메시지를 불러옴
+    async function loadPreviousMessages() {
+      try {
+        const response = await fetch(`/chat/${meetingChatRoomId}/messages`);
+        const messages = await response.json();
+        
+        messages.forEach(message => {
+          const messageElement = document.createElement('div');
+          messageElement.textContent = `${message.senderId}: ${message.content}`;
+          document.getElementById('messages').appendChild(messageElement);
+        });
+      } catch (error) {
+        console.error('Failed to load messages', error);
+      }
+    }
+  
+    // 페이지 로드 시 이전 메시지 불러오기
+    window.onload = loadPreviousMessages;
+  
+    // Join the chat room
+    socket.emit('joinRoom', { roomId: meetingChatRoomId, userId: userId, username: username });
+  
+    // Listen for incoming messages
+    socket.on('receiveMeetingMessage', (message) => {
+      const messageElement = document.createElement('div');
+      messageElement.textContent = `${message.senderId}: ${message.content}`;
+      document.getElementById('messages').appendChild(messageElement);
+    });
+  
+    // Send a message
+    document.getElementById('message-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const messageContent = document.getElementById('message-input').value;
+  
+      socket.emit('sendMeetingMessage', {
+        meetingChatRoomId: meetingChatRoomId,
+        senderId: userId,
+        senderType: 'user', // 또는 다른 사용자 유형
+        content: messageContent
+      });
+  
+      document.getElementId('message-input').value = ''; // 메시지 입력창 비우기
+    });
+  </script>
+      
+</body>
+</html>
