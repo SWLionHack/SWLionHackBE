@@ -27,26 +27,26 @@ const insertMockData = async () => {
 
     // 게시물 데이터 삽입
     const posts = await Post.bulkCreate([
-      { author: 1, status: 'teen', title: '가장 좋아하는 게임은 무엇인가요?', content: '저는 롤을 정말 좋아해요. 여러분은 어떤 게임을 좋아하나요?', createdAt: new Date() },
-      { author: 2, status: 'teen', title: '학교에서 가장 좋아하는 과목은?', content: '저는 과학을 좋아해요. 여러분은 어떤 과목을 좋아하나요?', createdAt: new Date() },
-      { author: 3, status: 'teen', title: '친구들과의 추억을 공유해봐요', content: '여러분은 친구들과 어떤 추억이 있나요? 저는 캠핑 갔던 기억이 가장 좋아요.', createdAt: new Date() },
-      { author: 4, status: 'teen', title: '가장 좋아하는 영화는 무엇인가요?', content: '저는 인셉션이라는 영화를 가장 좋아해요. 여러분은 어떤 영화를 좋아하나요?', createdAt: new Date() },
-      { author: 5, status: 'teen', title: '어떤 운동을 좋아하시나요?', content: '저는 축구를 좋아해요. 여러분은 어떤 운동을 좋아하나요?', createdAt: new Date() },
-      { author: 6, status: 'teen', title: '가장 좋아하는 음악 장르는?', content: '저는 K-POP을 좋아해요. 여러분은 어떤 음악을 좋아하나요?', createdAt: new Date() },
-      { author: 7, status: 'teen', title: '휴일에는 무엇을 하나요?', content: '저는 주로 독서를 해요. 여러분은 휴일에 무엇을 하나요?', createdAt: new Date() },
-      { author: 8, status: 'teen', title: '가장 좋아하는 음식은?', content: '저는 피자를 좋아해요. 여러분은 어떤 음식을 좋아하나요?', createdAt: new Date() },
-      { author: 9, status: 'teen', title: '가장 기억에 남는 여행지는?', content: '저는 제주도가 가장 기억에 남아요. 여러분은 어떤 여행지가 기억에 남나요?', createdAt: new Date() },
-      { author: 10, status: 'teen', title: '미래의 꿈은 무엇인가요?', content: '저는 의사가 되고 싶어요. 여러분의 미래의 꿈은 무엇인가요?', createdAt: new Date() },
-      { author: 1, status: 'teen', title: '좋아하는 취미는 무엇인가요?', content: '저는 그림 그리기가 취미에요. 여러분의 취미는 무엇인가요?', createdAt: new Date() },
-      { author: 2, status: 'teen', title: '가장 좋아하는 계절은?', content: '저는 봄이 가장 좋아요. 여러분은 어떤 계절을 좋아하나요?', createdAt: new Date() },
-      { author: 3, status: 'teen', title: '가장 좋아하는 색깔은?', content: '저는 파란색을 좋아해요. 여러분은 어떤 색깔을 좋아하나요?', createdAt: new Date() },
-      { author: 4, status: 'teen', title: '좋아하는 동물은?', content: '저는 강아지를 좋아해요. 여러분은 어떤 동물을 좋아하나요?', createdAt: new Date() },
-      { author: 5, status: 'teen', title: '좋아하는 과일은?', content: '저는 딸기를 좋아해요. 여러분은 어떤 과일을 좋아하나요?', createdAt: new Date() },
-      { author: 6, status: 'teen', title: '좋아하는 스포츠는?', content: '저는 야구를 좋아해요. 여러분은 어떤 스포츠를 좋아하나요?', createdAt: new Date() },
-      { author: 7, status: 'teen', title: '좋아하는 과자는?', content: '저는 초콜릿을 좋아해요. 여러분은 어떤 과자를 좋아하나요?', createdAt: new Date() },
-      { author: 8, status: 'teen', title: '좋아하는 음료는?', content: '저는 콜라를 좋아해요. 여러분은 어떤 음료를 좋아하나요?', createdAt: new Date() },
-      { author: 9, status: 'teen', title: '좋아하는 책 장르는?', content: '저는 판타지 소설을 좋아해요. 여러분은 어떤 책 장르를 좋아하나요?', createdAt: new Date() },
-      { author: 10, status: 'teen', title: '가장 좋아하는 명절은?', content: '저는 설날을 가장 좋아해요. 여러분은 어떤 명절을 좋아하나요?', createdAt: new Date() }
+      { author: 1, category:'info-tips', status: 'teen', title: '가장 좋아하는 게임은 무엇인가요?', content: '저는 롤을 정말 좋아해요. 여러분은 어떤 게임을 좋아하나요?', createdAt: new Date() },
+      { author: 2, category:'info-tips', status: 'teen', title: '학교에서 가장 좋아하는 과목은?', content: '저는 과학을 좋아해요. 여러분은 어떤 과목을 좋아하나요?', createdAt: new Date() },
+      { author: 3, category:'share-feelings',status: 'teen', title: '친구들과의 추억을 공유해봐요', content: '여러분은 친구들과 어떤 추억이 있나요? 저는 캠핑 갔던 기억이 가장 좋아요.', createdAt: new Date() },
+      { author: 4, category:'share-feelings',status: 'teen', title: '가장 좋아하는 영화는 무엇인가요?', content: '저는 인셉션이라는 영화를 가장 좋아해요. 여러분은 어떤 영화를 좋아하나요?', createdAt: new Date() },
+      { author: 5, category:'share-feelings', status: 'teen', title: '어떤 운동을 좋아하시나요?', content: '저는 축구를 좋아해요. 여러분은 어떤 운동을 좋아하나요?', createdAt: new Date() },
+      { author: 6, category:'share-feelings',status: 'teen', title: '가장 좋아하는 음악 장르는?', content: '저는 K-POP을 좋아해요. 여러분은 어떤 음악을 좋아하나요?', createdAt: new Date() },
+      { author: 7, category:'share-feelings',status: 'teen', title: '휴일에는 무엇을 하나요?', content: '저는 주로 독서를 해요. 여러분은 휴일에 무엇을 하나요?', createdAt: new Date() },
+      { author: 8, category:'share-feelings',status: 'teen', title: '가장 좋아하는 음식은?', content: '저는 피자를 좋아해요. 여러분은 어떤 음식을 좋아하나요?', createdAt: new Date() },
+      { author: 9, category:'info-tips', status: 'teen', title: '가장 기억에 남는 여행지는?', content: '저는 제주도가 가장 기억에 남아요. 여러분은 어떤 여행지가 기억에 남나요?', createdAt: new Date() },
+      { author: 10, category:'share-feelings',status: 'teen', title: '미래의 꿈은 무엇인가요?', content: '저는 의사가 되고 싶어요. 여러분의 미래의 꿈은 무엇인가요?', createdAt: new Date() },
+      { author: 1, category:'share-feelings',status: 'teen', title: '좋아하는 취미는 무엇인가요?', content: '저는 그림 그리기가 취미에요. 여러분의 취미는 무엇인가요?', createdAt: new Date() },
+      { author: 2, category:'info-tips', status: 'teen', title: '가장 좋아하는 계절은?', content: '저는 봄이 가장 좋아요. 여러분은 어떤 계절을 좋아하나요?', createdAt: new Date() },
+      { author: 3, category:'share-feelings',status: 'teen', title: '가장 좋아하는 색깔은?', content: '저는 파란색을 좋아해요. 여러분은 어떤 색깔을 좋아하나요?', createdAt: new Date() },
+      { author: 4, category:'info-tips', status: 'teen', title: '좋아하는 동물은?', content: '저는 강아지를 좋아해요. 여러분은 어떤 동물을 좋아하나요?', createdAt: new Date() },
+      { author: 5, category:'share-feelings',status: 'teen', title: '좋아하는 과일은?', content: '저는 딸기를 좋아해요. 여러분은 어떤 과일을 좋아하나요?', createdAt: new Date() },
+      { author: 6, category:'share-feelings',status: 'teen', title: '좋아하는 스포츠는?', content: '저는 야구를 좋아해요. 여러분은 어떤 스포츠를 좋아하나요?', createdAt: new Date() },
+      { author: 7, category:'info-tips', status: 'teen', title: '좋아하는 과자는?', content: '저는 초콜릿을 좋아해요. 여러분은 어떤 과자를 좋아하나요?', createdAt: new Date() },
+      { author: 8, category:'share-feelings',status: 'teen', title: '좋아하는 음료는?', content: '저는 콜라를 좋아해요. 여러분은 어떤 음료를 좋아하나요?', createdAt: new Date() },
+      { author: 9, category:'share-feelings',status: 'teen', title: '좋아하는 책 장르는?', content: '저는 판타지 소설을 좋아해요. 여러분은 어떤 책 장르를 좋아하나요?', createdAt: new Date() },
+      { author: 10, category:'share-feelings',status: 'teen', title: '가장 좋아하는 명절은?', content: '저는 설날을 가장 좋아해요. 여러분은 어떤 명절을 좋아하나요?', createdAt: new Date() }
     ]);
     console.log('Mock post data inserted');
 

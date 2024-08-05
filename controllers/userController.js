@@ -4,7 +4,8 @@ const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
 const User = require('../models/User');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'JWT_TOKEN';
+const JWT_SECRET = process.env.JWT_SECRET;
+
 
 // 로그인 페이지 제공
 const loginPage = (req, res) => {
@@ -34,7 +35,10 @@ const login = async (req, res) => {
     const token = jwt.sign({ id: user.id, email: user.email, name: user.name, status: user.status }, JWT_SECRET, { expiresIn: '24h' });
 
     // JWT 토큰을 쿠키에 저장
-    res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+    res.cookie('token', token, { 
+      httpOnly: true, 
+      secure: process.env.NODE_ENV === 'production' ? true : false // 개발 환경에서는 false, 배포 환경에서는 true
+    });
 
     return res.status(200).json({ message: '로그인이 완료되었습니다.', token });
   } catch (err) {

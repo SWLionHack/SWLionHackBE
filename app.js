@@ -43,6 +43,9 @@ const meetingChatRouter = require('./routes/meetingChatRouter');
 const gptChatRoutes = require('./routes/gpt_api/gptUserRoutes')
 const assistantRoutes = require('./routes/gpt_api/assistantRoutes')
 
+/** diary **/
+const diaryRouter = require('./routes/diaryRouter')
+
 const schedule = require('node-schedule');
 const { setupSocket } = require('./socket');
 const insertMockData = require('./mockData');
@@ -57,7 +60,11 @@ OpenChatMessage.belongsTo(OpenChatRoom, { foreignKey: 'openChatRoomId' });
 const app = express(); // 앱 변수 정의
 
 const port = process.env.PORT || 8181;
-const corsOrigins = [process.env.CORS_ORIGIN || 'http://localhost', 'http://localhost:8181'];
+const corsOrigins = [
+  process.env.CORS_ORIGIN || 'http://localhost',
+  'http://localhost:8181',
+  'http://localhost:3000',
+];
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -176,6 +183,8 @@ app.use('/meet', meetRouter);
 
 app.use('/gpt', gptChatRoutes);
 app.use('/assistant', assistantRoutes);
+
+app.use('/diary', diaryRouter);
 
 const server = app.listen(port, () => {
   console.log(`Server running on :${port}`);
