@@ -1,9 +1,9 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../sequelize');
-const QnAVote = require('./QnAVoteModel'); // QnAVote 모델을 올바르게 불러옵니다.
+const MeetVote = require('./MeetVoteModel'); 
 
-const QnA = sequelize.define('QnA', {
-  qnaID: {
+const Meet = sequelize.define('Meet', {
+  meetID: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
@@ -23,11 +23,16 @@ const QnA = sequelize.define('QnA', {
   author: {
     type: DataTypes.INTEGER,
     allowNull: false,
+  },
+  maxCapacity: {
+    type: DataTypes.INTEGER, 
+    allowNull: false,
+    defaultValue: 1, // 자신의 글 참가 방지하고 1로 할 예정 
   }
 });
 
 // 모델 간의 관계를 정의합니다.
-QnA.hasMany(QnAVote, { foreignKey: 'qnaID', as: 'votes' });
-QnAVote.belongsTo(QnA, { foreignKey: 'qnaID', as: 'qna' });
+Meet.hasMany(MeetVote, { foreignKey: 'meetID', as: 'votes' }); 
+MeetVote.belongsTo(Meet, { foreignKey: 'meetID', as: 'meet' }); 
 
-module.exports = QnA;
+module.exports = Meet;

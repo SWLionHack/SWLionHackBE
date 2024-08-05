@@ -1,13 +1,13 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../sequelize');
 
-const QnAVote = sequelize.define('QnAVote', {
+const MeetVote = sequelize.define('MeetVote', {
   voteID: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
   },
-  qnaID: {
+  meetID: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
@@ -17,4 +17,4 @@ const QnAVote = sequelize.define('QnAVote', {
   },
 });
 
-module.exports = QnAVote;
+module.exports = MeetVote;

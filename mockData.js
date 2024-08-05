@@ -5,8 +5,8 @@ const Comment = require('./models/commentModel');
 const OpenChatRoom = require('./models/chat/OpenChatRoom');
 const EverydayQuestion = require('./models/daily_question/EverydayQuestion');
 const DailyQuestion = require('./models/daily_question/DailyQuestion');
-const QnA = require('./models/qna/QnAModel');
-const QnAVote = require('./models/qna/QnAVoteModel'); 
+const QnA = require('./models/meet/MeetModel');
+const QnAVote = require('./models/meet/MeetVoteModel'); 
 
 const insertMockData = async () => {
   try {

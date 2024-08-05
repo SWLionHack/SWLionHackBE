@@ -1,7 +1,7 @@
 const Post = require('../../models/postModel');
 const Comment = require('../../models/commentModel');
 const DailyQuestion = require('../../models/daily_question/DailyQuestion');
-const QnA = require('../../models/qna/QnAModel');
+const QnA = require('../../models/meet/MeetModel');
 const Question = require('../../models/questionModel');
 
 exports.getUserPosts = async (userId) => {
