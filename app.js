@@ -178,11 +178,11 @@ app.use("/", dailyQuestionRouter);
 app.use("/", everydayQuestionRouter);
 
 app.use('/api', openChatRouter);
-app.use('/chat', meetingChatRouter);
-
 
 app.use('/map_academy', academyRouter);
+
 app.use('/meet', meetRouter);
+app.use('/meet_chat', meetingChatRouter);
 
 app.use('/gpt', gptChatRoutes);
 app.use('/assistant', assistantRoutes);

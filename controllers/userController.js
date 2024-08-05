@@ -103,7 +103,7 @@ const protectedRoute = (req, res) => {
 const userInfo = async (req, res) => {
   try {
     const userId = req.user.id; // 인증 미들웨어를 통해 설정된 사용자 ID
-    const user = await User.findByPk(userId, { attributes: ['name', 'phone', 'email', 'password'] });
+    const user = await User.findByPk(userId, { attributes: ['id', 'name', 'phone', 'email', 'password'] });
 
     if (!user) {
       return res.status(404).send('사용자를 찾을 수 없습니다.');

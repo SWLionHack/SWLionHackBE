@@ -18,6 +18,10 @@ const MeetingChatMessage = sequelize.define('MeetingChatMessage', {
     onUpdate: 'CASCADE'
   },
   senderId: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
+  senderName: {
     type: DataTypes.STRING,
     allowNull: true
   },

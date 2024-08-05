@@ -13,6 +13,8 @@ router.get('/rooms', authenticateJWT, meetingChatController.getAllMeetingChatRoo
 // 특정 ID의 Meeting Chat Room 가져오기
 router.get('/room/:id', authenticateJWT, meetingChatController.getMeetingChatRoomById);
 
+router.post('/room/:id/message', authenticateJWT, meetingChatController.sendMessage);
+
 // 특정 Meet ID에 대한 채팅방 제공
 router.get('/:meetID', authenticateJWT, (req, res) => {
     const meetID = req.params.meetID;

@@ -21,8 +21,11 @@ const insertMockData = async () => {
       { name: 'Grace', phone: '010-7777-7777', email: 'grace@gmail.com', password: await bcrypt.hash('password7', 10), status: "teen", birthdate: new Date('2006-01-01') },
       { name: 'Hank', phone: '010-8888-8888', email: 'hank@gmail.com', password: await bcrypt.hash('password8', 10), status: "teen", birthdate: new Date('2008-01-01') },
       { name: 'Ivy', phone: '010-9999-9999', email: 'ivy@gmail.com', password: await bcrypt.hash('password9', 10), status: "teen", birthdate: new Date('2006-01-01') },
-      { name: 'Jack', phone: '010-0000-0000', email: 'jack@gmail.com', password: await bcrypt.hash('password10', 10), status: "teen", birthdate: new Date('2005-01-01') }
+      { name: 'Jack', phone: '010-0000-0000', email: 'jack@gmail.com', password: await bcrypt.hash('password10', 10), status: "teen", birthdate: new Date('2005-01-01') },
+      { name: 'User1', phone: '010-1234-5678', email: 'asdf@gmail.com', password: await bcrypt.hash('asdf', 10), status: "teen", birthdate: new Date('2006-01-01') },
+      { name: 'User2', phone: '010-8765-4321', email: 'asdfasdf@gmail.com', password: await bcrypt.hash('asdfasdf', 10), status: "teen", birthdate: new Date('2007-01-01') }
     ]);
+    
     console.log('User mock data inserted');
 
     // 게시물 데이터 삽입
