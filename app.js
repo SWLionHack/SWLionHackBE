@@ -46,6 +46,9 @@ const assistantRoutes = require('./routes/gpt_api/assistantRoutes')
 /** diary **/
 const diaryRouter = require('./routes/diaryRouter')
 
+/** survey **/
+const surveyRouter = require('./routes/surveyRouter')
+
 const schedule = require('node-schedule');
 const { setupSocket } = require('./socket');
 const insertMockData = require('./mockData');
@@ -185,6 +188,8 @@ app.use('/gpt', gptChatRoutes);
 app.use('/assistant', assistantRoutes);
 
 app.use('/diary', diaryRouter);
+
+app.use('/survey', surveyRouter);
 
 const server = app.listen(port, () => {
   console.log(`Server running on :${port}`);
