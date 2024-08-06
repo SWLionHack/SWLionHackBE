@@ -27,7 +27,16 @@ const Expert = sequelize.define('Expert', {
   birthdate: {
     type: DataTypes.DATE,
     allowNull: false
+  },
+  place:{
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
+  introduce:{
+    type: DataTypes.TEXT,
+    allowNull: false
   }
+
 }, {
   tableName: 'expert',
   timestamps: false
