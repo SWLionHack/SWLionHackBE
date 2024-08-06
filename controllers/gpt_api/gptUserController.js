@@ -3,7 +3,9 @@ const fs = require('fs');
 const path = require('path');
 const winston = require('winston');
 const UserThread = require('../../models/gpt_api/UserThreadModel');
-const { getUserPosts, getUserComments, getUserDailyQuestions, getUserQnAs, getUserQuestions } = require('./userDataHelper');
+const { getUserPosts, getUserComments, getUserDailyQuestions, 
+  getUserQnAs, getUserQuestions, getUserSurvey,
+  getUserDiary } = require('./userDataHelper');
 const { threadId } = require('worker_threads');
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -140,8 +142,6 @@ exports.continueUserChat = async (req, res) => {
   }
 };
 
-
-
 exports.findUserMessage = async (req, res) => {
   const userId = req.user.id;
 
@@ -172,6 +172,16 @@ async function collectUserData(userId) {
   const userDailyQuestions = await getUserDailyQuestions(userId);
   const userQnAs = await getUserQnAs(userId);
   const userQuestions = await getUserQuestions(userId);
+  const userDiary = await getUserDiary(userId);
+  const userSurvey = await getUserSurvey(userId);
+
+  console.log(userId);
+  console.log(userPosts);
+  console.log(userComments);
+  console.log(userDailyQuestions);
+  console.log(userQnAs);
+  console.log(userQuestions);
+  console.log(userSurvey);
 
   return `
     User Posts:
@@ -188,5 +198,11 @@ async function collectUserData(userId) {
 
     User Questions:
     ${userQuestions.map(question => `Title: ${question.title}\nContent: ${question.content}`).join('\n\n')}
+
+    User Survey:
+    ${userSurvey.map(survey => `score: ${survey.score}\nResult: ${survey.result}`).join(`\n\n`)}
+
+    User Diary:
+    ${userDiary.map(diary => `title: ${diary.title}\nContent: ${diary.content}\score: ${diary.score}`).join(`\n\n`)}
   `;
 }
