@@ -191,6 +191,8 @@ app.use('/diary', diaryRouter);
 
 app.use('/survey', surveyRouter);
 
+app.use('/uploads', express.static('uploads'));
+
 const server = app.listen(port, () => {
   console.log(`Server running on :${port}`);
 });
