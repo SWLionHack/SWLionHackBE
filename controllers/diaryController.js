@@ -1,4 +1,5 @@
 const Diary = require('../models/diary');
+const { Op } = require('sequelize'); // Sequelize의 연산자 불러오기
 
 // 유저가 작성한 모든 일기 조회
 exports.getAllDiaries = async (req, res) => {
@@ -18,15 +19,15 @@ exports.getAllDiaries = async (req, res) => {
 // 일기 작성
 exports.createDiary = async (req, res) => {
     const author = req.user.id;
-    const { title, content, summary, date } = req.body;
+    const { title, content, date, score } = req.body;
   
     try {
       const diary = await Diary.create({
         title,
         content,
         author,
-        summary,
-        createdAt: date || new Date()  
+        createdAt: date || new Date(),
+        score
       });
       
   

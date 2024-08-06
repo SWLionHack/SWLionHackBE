@@ -7,6 +7,14 @@ const EverydayQuestion = require('./models/daily_question/EverydayQuestion');
 const DailyQuestion = require('./models/daily_question/DailyQuestion');
 const QnA = require('./models/meet/MeetModel');
 const QnAVote = require('./models/meet/MeetVoteModel'); 
+const Diary = require('./models/diary')
+
+// 랜덤 점수를 생성하는 함수
+const generateRandomScore = (prevScore) => {
+  const min = Math.max(0, prevScore - 10); // 이전 점수의 범위에 기반한 최소값
+  const max = Math.min(100, prevScore + 10); // 이전 점수의 범위에 기반한 최대값
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
 
 const insertMockData = async () => {
   try {
@@ -166,81 +174,112 @@ const insertMockData = async () => {
     console.log('Mock daily questions data inserted');
 
     // QnA 데이터 삽입
-    const qnaData = [
-      { author: 1, title: '온라인 수업이 더 효율적입니다.', content: '온라인 수업은 시간과 장소에 구애받지 않고 효율적으로 학습할 수 있는 장점이 있습니다.', expirationTime: new Date(new Date().getTime() + 1 * 60 * 60 * 1000), createdAt: new Date() },
-      { author: 2, title: '매일 체육 수업이 필요합니다.', content: '매일 체육 수업은 학생들의 건강을 증진시키고 스트레스를 해소하는 데 도움이 됩니다.', expirationTime: new Date(new Date().getTime() + 2 * 60 * 60 * 1000), createdAt: new Date() },
-      { author: 3, title: '스마트폰 사용 시간을 제한해야 합니다.', content: '스마트폰 사용 시간 제한은 학생들의 집중력을 높이고 건강한 생활 습관을 유지하는 데 중요합니다.', expirationTime: new Date(new Date().getTime() + 3 * 60 * 60 * 1000), createdAt: new Date() },
-      { author: 4, title: '청소년들에게 더 많은 자율성을 줘야 합니다.', content: '청소년들이 자율성을 가질 때 자기 주도적인 학습과 성장이 가능합니다.', expirationTime: new Date(new Date().getTime() + 4 * 60 * 60 * 1000), createdAt: new Date() },
-      { author: 5, title: '학교 급식의 질을 개선해야 합니다.', content: '학교 급식의 질 개선은 학생들의 건강과 학습 효율을 높이는 데 중요합니다.', expirationTime: new Date(new Date().getTime() + 5 * 60 * 60 * 1000), createdAt: new Date() },
-      { author: 6, title: '학교에서 코딩 교육이 필수적입니다.', content: '코딩 교육은 미래 사회에서 중요한 역량을 키우는 데 필수적입니다.', expirationTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), createdAt: new Date() },
-      { author: 7, title: '학교 시험은 오픈북으로 해야 합니다.', content: '오픈북 시험은 학생들이 단순 암기보다 문제 해결 능력을 기르는 데 도움이 됩니다.', expirationTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), createdAt: new Date() },
-      { author: 8, title: '학생들이 학교 규칙을 직접 정해야 합니다.', content: '학생들이 직접 규칙을 정하면 책임감을 느끼고 더 잘 지킬 수 있습니다.', expirationTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), createdAt: new Date() },
-      { author: 9, title: '학교에서는 교복 대신 사복을 입어야 합니다.', content: '사복 착용은 학생들의 개성을 존중하고 편안한 학습 환경을 제공합니다.', expirationTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), createdAt: new Date() },
-      { author: 10, title: '학교에서 스마트폰 사용을 금지해야 합니다.', content: '스마트폰 사용 금지는 학생들이 수업에 더 집중할 수 있도록 돕습니다.', expirationTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), createdAt: new Date() }
-    ];   
+    // const qnaData = [
+    //   { author: 1, title: '온라인 수업이 더 효율적입니다.', content: '온라인 수업은 시간과 장소에 구애받지 않고 효율적으로 학습할 수 있는 장점이 있습니다.', expirationTime: new Date(new Date().getTime() + 1 * 60 * 60 * 1000), createdAt: new Date() },
+    //   { author: 2, title: '매일 체육 수업이 필요합니다.', content: '매일 체육 수업은 학생들의 건강을 증진시키고 스트레스를 해소하는 데 도움이 됩니다.', expirationTime: new Date(new Date().getTime() + 2 * 60 * 60 * 1000), createdAt: new Date() },
+    //   { author: 3, title: '스마트폰 사용 시간을 제한해야 합니다.', content: '스마트폰 사용 시간 제한은 학생들의 집중력을 높이고 건강한 생활 습관을 유지하는 데 중요합니다.', expirationTime: new Date(new Date().getTime() + 3 * 60 * 60 * 1000), createdAt: new Date() },
+    //   { author: 4, title: '청소년들에게 더 많은 자율성을 줘야 합니다.', content: '청소년들이 자율성을 가질 때 자기 주도적인 학습과 성장이 가능합니다.', expirationTime: new Date(new Date().getTime() + 4 * 60 * 60 * 1000), createdAt: new Date() },
+    //   { author: 5, title: '학교 급식의 질을 개선해야 합니다.', content: '학교 급식의 질 개선은 학생들의 건강과 학습 효율을 높이는 데 중요합니다.', expirationTime: new Date(new Date().getTime() + 5 * 60 * 60 * 1000), createdAt: new Date() },
+    //   { author: 6, title: '학교에서 코딩 교육이 필수적입니다.', content: '코딩 교육은 미래 사회에서 중요한 역량을 키우는 데 필수적입니다.', expirationTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), createdAt: new Date() },
+    //   { author: 7, title: '학교 시험은 오픈북으로 해야 합니다.', content: '오픈북 시험은 학생들이 단순 암기보다 문제 해결 능력을 기르는 데 도움이 됩니다.', expirationTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), createdAt: new Date() },
+    //   { author: 8, title: '학생들이 학교 규칙을 직접 정해야 합니다.', content: '학생들이 직접 규칙을 정하면 책임감을 느끼고 더 잘 지킬 수 있습니다.', expirationTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), createdAt: new Date() },
+    //   { author: 9, title: '학교에서는 교복 대신 사복을 입어야 합니다.', content: '사복 착용은 학생들의 개성을 존중하고 편안한 학습 환경을 제공합니다.', expirationTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), createdAt: new Date() },
+    //   { author: 10, title: '학교에서 스마트폰 사용을 금지해야 합니다.', content: '스마트폰 사용 금지는 학생들이 수업에 더 집중할 수 있도록 돕습니다.', expirationTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), createdAt: new Date() }
+    // ];   
 
-    // QnA 데이터를 데이터베이스에 삽입
-    const qnaRecords = await QnA.bulkCreate(qnaData);
+    // // QnA 데이터를 데이터베이스에 삽입
+    // const qnaRecords = await QnA.bulkCreate(qnaData);
 
     // QnA 데이터 삽입 후 생성된 ID 가져오기
-    const qnaIDs = qnaRecords.map(record => record.qnaID);
+    // const qnaIDs = qnaRecords.map(record => record.qnaID);
 
     // QnAVote 데이터 생성
-    const qnaVotesData = [
-      { qnaID: qnaIDs[0], voterID: 2 },
-      { qnaID: qnaIDs[1], voterID: 3 },
-      { qnaID: qnaIDs[1], voterID: 4 },
-      { qnaID: qnaIDs[2], voterID: 4 },
-      { qnaID: qnaIDs[2], voterID: 5 },
-      { qnaID: qnaIDs[2], voterID: 6 },
-      { qnaID: qnaIDs[3], voterID: 5 },
-      { qnaID: qnaIDs[3], voterID: 6 },
-      { qnaID: qnaIDs[3], voterID: 7 },
-      { qnaID: qnaIDs[3], voterID: 8 },
-      { qnaID: qnaIDs[4], voterID: 6 },
-      { qnaID: qnaIDs[4], voterID: 7 },
-      { qnaID: qnaIDs[4], voterID: 8 },
-      { qnaID: qnaIDs[4], voterID: 9 },
-      { qnaID: qnaIDs[4], voterID: 10 },
-      { qnaID: qnaIDs[5], voterID: 7 },
-      { qnaID: qnaIDs[5], voterID: 8 },
-      { qnaID: qnaIDs[5], voterID: 9 },
-      { qnaID: qnaIDs[5], voterID: 10 },
-      { qnaID: qnaIDs[5], voterID: 1 },
-      { qnaID: qnaIDs[6], voterID: 8 },
-      { qnaID: qnaIDs[6], voterID: 9 },
-      { qnaID: qnaIDs[6], voterID: 10 },
-      { qnaID: qnaIDs[6], voterID: 1 },
-      { qnaID: qnaIDs[6], voterID: 2 },
-      { qnaID: qnaIDs[6], voterID: 3 },
-      { qnaID: qnaIDs[7], voterID: 9 },
-      { qnaID: qnaIDs[7], voterID: 10 },
-      { qnaID: qnaIDs[7], voterID: 1 },
-      { qnaID: qnaIDs[7], voterID: 2 },
-      { qnaID: qnaIDs[7], voterID: 3 },
-      { qnaID: qnaIDs[7], voterID: 4 },
-      { qnaID: qnaIDs[8], voterID: 10 },
-      { qnaID: qnaIDs[8], voterID: 1 },
-      { qnaID: qnaIDs[8], voterID: 2 },
-      { qnaID: qnaIDs[8], voterID: 3 },
-      { qnaID: qnaIDs[8], voterID: 4 },
-      { qnaID: qnaIDs[8], voterID: 5 },
-      { qnaID: qnaIDs[8], voterID: 6 },
-      { qnaID: qnaIDs[9], voterID: 1 },
-      { qnaID: qnaIDs[9], voterID: 2 },
-      { qnaID: qnaIDs[9], voterID: 3 },
-      { qnaID: qnaIDs[9], voterID: 4 },
-      { qnaID: qnaIDs[9], voterID: 5 },
-      { qnaID: qnaIDs[9], voterID: 6 },
-      { qnaID: qnaIDs[9], voterID: 7 },
-      { qnaID: qnaIDs[9], voterID: 8 },
-      { qnaID: qnaIDs[9], voterID: 9 }
+    // const qnaVotesData = [
+    //   { qnaID: qnaIDs[0], voterID: 2 },
+    //   { qnaID: qnaIDs[1], voterID: 3 },
+    //   { qnaID: qnaIDs[1], voterID: 4 },
+    //   { qnaID: qnaIDs[2], voterID: 4 },
+    //   { qnaID: qnaIDs[2], voterID: 5 },
+    //   { qnaID: qnaIDs[2], voterID: 6 },
+    //   { qnaID: qnaIDs[3], voterID: 5 },
+    //   { qnaID: qnaIDs[3], voterID: 6 },
+    //   { qnaID: qnaIDs[3], voterID: 7 },
+    //   { qnaID: qnaIDs[3], voterID: 8 },
+    //   { qnaID: qnaIDs[4], voterID: 6 },
+    //   { qnaID: qnaIDs[4], voterID: 7 },
+    //   { qnaID: qnaIDs[4], voterID: 8 },
+    //   { qnaID: qnaIDs[4], voterID: 9 },
+    //   { qnaID: qnaIDs[4], voterID: 10 },
+    //   { qnaID: qnaIDs[5], voterID: 7 },
+    //   { qnaID: qnaIDs[5], voterID: 8 },
+    //   { qnaID: qnaIDs[5], voterID: 9 },
+    //   { qnaID: qnaIDs[5], voterID: 10 },
+    //   { qnaID: qnaIDs[5], voterID: 1 },
+    //   { qnaID: qnaIDs[6], voterID: 8 },
+    //   { qnaID: qnaIDs[6], voterID: 9 },
+    //   { qnaID: qnaIDs[6], voterID: 10 },
+    //   { qnaID: qnaIDs[6], voterID: 1 },
+    //   { qnaID: qnaIDs[6], voterID: 2 },
+    //   { qnaID: qnaIDs[6], voterID: 3 },
+    //   { qnaID: qnaIDs[7], voterID: 9 },
+    //   { qnaID: qnaIDs[7], voterID: 10 },
+    //   { qnaID: qnaIDs[7], voterID: 1 },
+    //   { qnaID: qnaIDs[7], voterID: 2 },
+    //   { qnaID: qnaIDs[7], voterID: 3 },
+    //   { qnaID: qnaIDs[7], voterID: 4 },
+    //   { qnaID: qnaIDs[8], voterID: 10 },
+    //   { qnaID: qnaIDs[8], voterID: 1 },
+    //   { qnaID: qnaIDs[8], voterID: 2 },
+    //   { qnaID: qnaIDs[8], voterID: 3 },
+    //   { qnaID: qnaIDs[8], voterID: 4 },
+    //   { qnaID: qnaIDs[8], voterID: 5 },
+    //   { qnaID: qnaIDs[8], voterID: 6 },
+    //   { qnaID: qnaIDs[9], voterID: 1 },
+    //   { qnaID: qnaIDs[9], voterID: 2 },
+    //   { qnaID: qnaIDs[9], voterID: 3 },
+    //   { qnaID: qnaIDs[9], voterID: 4 },
+    //   { qnaID: qnaIDs[9], voterID: 5 },
+    //   { qnaID: qnaIDs[9], voterID: 6 },
+    //   { qnaID: qnaIDs[9], voterID: 7 },
+    //   { qnaID: qnaIDs[9], voterID: 8 },
+    //   { qnaID: qnaIDs[9], voterID: 9 }
+    // ];
+
+    // // QnAVote 데이터 삽입
+    // await QnAVote.bulkCreate(qnaVotesData);
+    // console.log('Mock QnA and QnAVote data inserted');
+
+
+    const diaryToday = new Date(); // 오늘 날짜
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(diaryToday.getMonth() - 1);
+
+    // 초기 점수
+    let previousScore = 50;
+
+    // 목업 데이터 생성
+    const diaries = [
+      { title: '출산 후 첫날의 감정', content: '출산 후 첫날, 감정이 매우 복잡합니다. 기쁨과 걱정이 동시에 느껴집니다.', createdAt: new Date(diaryToday.getFullYear(), diaryToday.getMonth() - 1, 1), score: previousScore, author: 11 },
+      { title: '아이와의 첫 상봉', content: '아기와 처음 만났을 때의 감동과 함께 새로운 삶에 대한 불안이 느껴집니다.', createdAt: new Date(diaryToday.getFullYear(), diaryToday.getMonth() - 1, 3), score: previousScore = generateRandomScore(previousScore), author: 11 },
+      { title: '수면 부족과 피로', content: '아기를 돌보는 것에 지치고, 수면 부족으로 피로감이 계속됩니다.', createdAt: new Date(diaryToday.getFullYear(), diaryToday.getMonth() - 1, 6), score: previousScore = generateRandomScore(previousScore), author: 11 },
+      { title: '부모님과의 대화', content: '부모님과의 대화에서 도움을 받았지만, 여전히 마음의 불안이 가시지 않습니다.', createdAt: new Date(diaryToday.getFullYear(), diaryToday.getMonth() - 1, 9), score: previousScore = generateRandomScore(previousScore), author: 11 },
+      { title: '출산 후의 변화', content: '몸과 마음이 모두 변화하는 과정에서 힘들지만, 아기를 위해 노력합니다.', createdAt: new Date(diaryToday.getFullYear(), diaryToday.getMonth() - 1, 12), score: previousScore = generateRandomScore(previousScore), author: 11 },
+      { title: '아이의 첫 미소', content: '아기의 첫 미소를 보면서 마음이 조금은 편안해집니다. 그래도 여전히 많은 걱정이 있습니다.', createdAt: new Date(diaryToday.getFullYear(), diaryToday.getMonth() - 1, 15), score: previousScore = generateRandomScore(previousScore), author: 11 },
+      { title: '산후 회복', content: '산후 회복이 생각보다 힘들고, 몸과 마음 모두 지치고 있습니다.', createdAt: new Date(diaryToday.getFullYear(), diaryToday.getMonth() - 1, 18), score: previousScore = generateRandomScore(previousScore), author: 11 },
+      { title: '아기의 수면 패턴', content: '아기의 수면 패턴이 불규칙하여 힘들지만, 조금씩 나아지는 것 같습니다.', createdAt: new Date(diaryToday.getFullYear(), diaryToday.getMonth() - 1, 21), score: previousScore = generateRandomScore(previousScore), author: 11 },
+      { title: '도움이 필요한 순간', content: '혼자서 모든 것을 감당하기 어려워 도움을 요청하고 싶습니다.', createdAt: new Date(diaryToday.getFullYear(), diaryToday.getMonth() - 1, 24), score: previousScore = generateRandomScore(previousScore), author: 11 },
+      { title: '미래에 대한 걱정', content: '아기의 미래에 대한 걱정이 계속되지만, 하루하루를 열심히 살아가고 있습니다.', createdAt: new Date(diaryToday.getFullYear(), diaryToday.getMonth() - 1, 27), score: previousScore = generateRandomScore(previousScore), author: 11 },
+      { title: '작은 기쁨', content: '아기가 웃는 모습을 보면서 작은 기쁨을 느끼지만, 여전히 어려운 점이 많습니다.', createdAt: new Date(diaryToday.getFullYear(), diaryToday.getMonth() - 1, 30), score: previousScore = generateRandomScore(previousScore), author: 11 },
+      { title: '하루 일과', content: '하루 일과를 정리하며, 아기와의 시간은 소중하지만 힘든 부분도 많습니다.', createdAt: new Date(diaryToday.getFullYear(), diaryToday.getMonth(), 2), score: previousScore = generateRandomScore(previousScore), author: 11 },
+      { title: '가족과의 시간', content: '가족과 함께 시간을 보내는 것이 위안이 되지만, 여전히 많은 고민이 있습니다.', createdAt: new Date(diaryToday.getFullYear(), diaryToday.getMonth(), 5), score: previousScore = generateRandomScore(previousScore), author: 11 },
+      { title: '자기 자신 돌보기', content: '자신을 돌볼 시간이 부족하여 피로가 누적되고 있습니다.', createdAt: new Date(diaryToday.getFullYear(), diaryToday.getMonth(), 8), score: previousScore = generateRandomScore(previousScore), author: 11 },
+      { title: '아기와의 소통', content: '아기와의 소통이 중요하다는 것을 깨닫고, 더욱 노력하고 있습니다.', createdAt: new Date(diaryToday.getFullYear(), diaryToday.getMonth(), 11), score: previousScore = generateRandomScore(previousScore), author: 11 },
+      { title: '지원이 필요한 시점', content: '다시 한 번 주변의 지원이 필요함을 느끼며, 도움을 요청하고 싶습니다.', createdAt: new Date(diaryToday.getFullYear(), diaryToday.getMonth(), 14), score: previousScore = generateRandomScore(previousScore), author: 11 }
     ];
 
-    // QnAVote 데이터 삽입
-    await QnAVote.bulkCreate(qnaVotesData);
-    console.log('Mock QnA and QnAVote data inserted');
-
+    // 다이어리 데이터를 데이터베이스에 삽입합니다.
+    await Diary.bulkCreate(diaries);
+    console.log('Mock diaries created successfully.');
 
   } catch (error) {
     console.error('Unable to insert mock data:', error);

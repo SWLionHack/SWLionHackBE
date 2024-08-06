@@ -11,8 +11,8 @@ const Diary = sequelize.define('Diary', {
     type: DataTypes.TEXT,
     allowNull: false
   },
-  summary: {
-    type: DataTypes.STRING,
+  score: {
+    type: DataTypes.INTEGER,
     allowNull: true
   },
   createdAt: {
