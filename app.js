@@ -39,6 +39,13 @@ const meetRouter = require('./routes/meetRouter');
 /** meeting chat */
 const meetingChatRouter = require('./routes/meetingChatRouter');
 
+// expertchat
+const expertchatRouter = require('./routes/expertchatRouter');
+
+const expertModel = require('./models/expertChat/expertModel.js');
+const expertchatModel = require('./models/expertChat/expertchatModel.js');
+const expertmessageModel = require('./models/expertChat/expertmessageModel.js');
+
 /** gpt api **/
 const gptChatRoutes = require('./routes/gpt_api/gptUserRoutes')
 const assistantRoutes = require('./routes/gpt_api/assistantRoutes')
@@ -190,6 +197,7 @@ app.use('/assistant', assistantRoutes);
 app.use('/diary', diaryRouter);
 
 app.use('/survey', surveyRouter);
+app.use('/', expertchatRouter);
 
 const server = app.listen(port, () => {
   console.log(`Server running on :${port}`);

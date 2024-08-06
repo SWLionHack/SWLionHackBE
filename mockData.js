@@ -7,7 +7,8 @@ const EverydayQuestion = require('./models/daily_question/EverydayQuestion');
 const DailyQuestion = require('./models/daily_question/DailyQuestion');
 const QnA = require('./models/meet/MeetModel');
 const QnAVote = require('./models/meet/MeetVoteModel'); 
-const Diary = require('./models/diary')
+const Diary = require('./models/diary');
+const Expert = require('./models/expertChat/expertModel');
 
 // 랜덤 점수를 생성하는 함수
 const generateRandomScore = (prevScore) => {
@@ -35,6 +36,21 @@ const insertMockData = async () => {
     ]);
     
     console.log('User mock data inserted');
+
+    const experts = await Expert.bulkCreate([
+      { name: 'Dr. Kim', phone: '010-1111-2222', email: 'kim@example.com', password: await bcrypt.hash('password1', 10), status: 'expert', birthdate: new Date('1970-01-01') },
+      { name: 'Dr. Lee', phone: '010-2222-3333', email: 'lee@example.com', password: await bcrypt.hash('password2', 10), status: 'expert', birthdate: new Date('1980-02-01') },
+      { name: 'Dr. Park', phone: '010-3333-4444', email: 'park@example.com', password: await bcrypt.hash('password3', 10), status: 'expert', birthdate: new Date('1990-03-01') },
+      { name: 'Dr. Choi', phone: '010-4444-5555', email: 'choi@example.com', password: await bcrypt.hash('password4', 10), status: 'expert', birthdate: new Date('1985-04-01') },
+      { name: 'Dr. Jung', phone: '010-5555-6666', email: 'jung@example.com', password: await bcrypt.hash('password5', 10), status: 'expert', birthdate: new Date('1975-05-01') },
+      { name: 'Dr. Kang', phone: '010-6666-7777', email: 'kang@example.com', password: await bcrypt.hash('password6', 10), status: 'expert', birthdate: new Date('1988-06-01') },
+      { name: 'Dr. Yoon', phone: '010-7777-8888', email: 'yoon@example.com', password: await bcrypt.hash('password7', 10), status: 'expert', birthdate: new Date('1979-07-01') },
+      { name: 'Dr. Lim', phone: '010-8888-9999', email: 'lim@example.com', password: await bcrypt.hash('password8', 10), status: 'expert', birthdate: new Date('1983-08-01') },
+      { name: 'Dr. Han', phone: '010-9999-0000', email: 'han@example.com', password: await bcrypt.hash('password9', 10), status: 'expert', birthdate: new Date('1982-09-01') },
+      { name: 'Dr. Moon', phone: '010-0000-1111', email: 'moon@example.com', password: await bcrypt.hash('password10', 10), status: 'expert', birthdate: new Date('1991-10-01') }
+    ]);
+
+    console.log('Expert mock data inserted');
 
     // 게시물 데이터 삽입
     const posts = await Post.bulkCreate([
