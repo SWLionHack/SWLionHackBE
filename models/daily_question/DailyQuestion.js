@@ -34,6 +34,10 @@ const DailyQuestion = sequelize.define('DailyQuestion', {
   likes: { // 좋아요 수 추가
     type: DataTypes.INTEGER,
     defaultValue: 0
+  },
+  imagePath: { // 사진 경로 추가
+    type: DataTypes.STRING,
+    allowNull: true  // 필수 아니여서 true
   }
 }, {
   tableName: 'daily_questions',

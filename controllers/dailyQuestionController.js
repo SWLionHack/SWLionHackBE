@@ -45,6 +45,7 @@ const getCurrentEverydayQuestionWithUserAnswer = async (req, res) => {
 const createDailyQuestion = async (req, res) => {
   try {
     const { content, questionId, isShared } = req.body;
+    const imagePath = req.file ? req.file.path : null; 
 
     const everydayQuestion = await EverydayQuestion.findOne({
       where: {
@@ -62,10 +63,11 @@ const createDailyQuestion = async (req, res) => {
       userId: req.user.id,
       userName: req.user.name,
       questionId: everydayQuestion.id,
-      isShared: isShared || false
+      isShared: isShared || false,
+      imagePath 
     });
 
-    // Emit socket event for shared answers
+    // 공유된 답변에 대해 소켓 이벤트 전송
     if (newDailyQuestion.isShared) {
       const io = getIo();
       io.emit('receiveSharedAnswer', newDailyQuestion); // 새로운 공유 답변을 모든 클라이언트에게 전송합니다.
